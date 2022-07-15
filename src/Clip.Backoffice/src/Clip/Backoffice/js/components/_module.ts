@@ -1,6 +1,6 @@
-import { PackageViewController } from './package-view.controller';
+import { OverviewController } from './overview.controller';
 
 export const ComponentsModule = angular
     .module('clip.components', [])
-    .controller(PackageViewController.controllerName, PackageViewController)
+    .controller(OverviewController.controllerName, OverviewController)
     .name;

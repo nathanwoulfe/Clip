@@ -15,7 +15,7 @@ export class ClipService implements IClipService {
         );
     }
 
-    set = (config: Array<IClipConfigModel>) => this._request('POST', 'saveConfig', config);
+    set = (config: IClipConfigModel) => this._request('POST', 'saveConfig', config);
 
     get = () => this._request('GET', 'getConfig');
 }

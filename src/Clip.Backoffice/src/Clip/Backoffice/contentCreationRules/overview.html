@@ -1,74 +1,154 @@
-<umb-editor-view footer="false" ng-controller="Clip.PackageView.Controller as $ctrl">
-    <umb-editor-header name="'Content creation configuration'"
-                       name-locked="true"
-                       hide-icon="true"
-                       hide-description="true"
-                       hide-alias="true">
-    </umb-editor-header>
-    <umb-editor-container>
-        <umb-box>
-            <umb-box-header title="Current rules"></umb-box-header>
-            <umb-box-content>
-                <p>Configure content-creation permissions for individual user groups - permitted types must be a comma-separated list of content type aliases</p>
-                <div class="umb-table" ng-if="$ctrl.config.length">
-                    <div class="umb-table-head">
-                        <div class="umb-table-row">
-                            <div class="umb-table-cell">
+<div ng-controller="Clip.Overview.Controller as vm">
+    <umb-editor-view footer="true">
+        <umb-editor-header name="vm.name"
+                           name-locked="true"
+                           hide-icon="true"
+                           hide-description="true"
+                           hide-alias="true">
+        </umb-editor-header>
+        <umb-editor-container>
+            <div class="flex justify-between items-center" style="margin-bottom:8px">
+                <div style="font-size: 16px;" class="bold">
+                    <localize key="clip_userGroupRules">User group rules</localize>
+                </div>
+                <umb-button type="button"
+                            button-style="outline"
+                            state="init"
+                            action="vm.addGroup()"
+                            label-key="general_add">
+                </umb-button>
+            </div>
 
-                            </div>
-                            <div class="umb-table-cell">
-                                Name
-                            </div>
-                            <div class="umb-table-cell">
-                                Permitted types
-                            </div>
-                            <div class="umb-table-cell">
+            <div class="umb-table">
+                <div class="umb-table-head">
+                    <div class="umb-table-row">
+                        <div class="umb-table-cell">
 
-                            </div>
+                        </div>
+                        <div class="umb-table-cell">
+                            <localize key="clip_userGroup">User group</localize>
+                        </div>
+                        <div class="umb-table-cell">
+                            <localize key="clip_allowedContentTypes">Allowed content types</localize>
+                        </div>
+                        <div class="umb-table-cell">
+
                         </div>
                     </div>
-                    <div class="umb-table-body">
-                        <div ng-repeat="config in $ctrl.config track by $index" class="umb-table-row">
-                            <div class="umb-table-cell">
-                                <umb-icon icon="{{ config.icon }}" class="{{ config.icon }}"></umb-icon>
+                </div>
+                <div class="umb-table-body" ng-if="vm.config.groups.length">
+                    <div ng-repeat="group in vm.config.groups track by $index" class="umb-table-row">
+                        <div class="umb-table-cell">
+                            <umb-icon icon="{{ group.icon }}" class="umb-table-body__icon umb-table-body__fileicon umb-icon"></umb-icon>
+                        </div>
+                        <div class="umb-table-cell">
+                            <div class="umb-table-body__link">{{ group.groupName }}</div>
+                        </div>
+                        <div class="umb-table-cell">
+                            <div>
+                                <umb-node-preview ng-repeat="type in vm.contentTypeSyncModel[group.groupId]"
+                                                  name="type.name"
+                                                  icon="type.icon"
+                                                  sortable="false"
+                                                  allow-edit="false"
+                                                  allow-remove="true"
+                                                  on-remove="vm.removeContentType(type, group.groupId)">
+                                </umb-node-preview>
                             </div>
-                            <div class="umb-table-cell">
-                                {{ config.groupName }}
-                            </div>
-                            <div class="umb-table-cell">
-                                <div>
-                                    <umb-node-preview ng-repeat="type in $ctrl.contentTypeSyncModel[config.groupId]"
-                                                      name="type.name"
-                                                      icon="type.icon"
-                                                      sortable="false"
-                                                      allow-remove="true"
-                                                      allow-edit="false"
-                                                      on-remove="$ctrl.removeContentType(type, config.GroupId)">
-                                    </umb-node-preview>
-                                    <button type="button"
-                                            class="umb-node-preview-add"
-                                            ng-click="$ctrl.addContentType(config.groupId)">
-                                        <localize key="general_add">Add</localize>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="umb-table-cell">
-                                <button type="button" class="btn btn-reset" ng-click="$ctrl.remove($index)">
-                                    <umb-icon icon="icon-trash" class="color-black"></umb-icon>
+
+                        </div>
+                        <div class="umb-table-cell">
+                            <div class="umb-node-preview__actions">
+                                <button type="button"
+                                        class="umb-node-preview__action"
+                                        ng-click="vm.addContentType(group.groupId)">
+                                    <localize key="clip_addContentType">Add content type</localize>
+                                </button>
+                                <button type="button"
+                                        class="umb-node-preview__action umb-node-preview__action--red"
+                                        ng-click="vm.removeGroup($index)">
+                                    <localize key="clip_removeGroup">Remove group</localize>
                                 </button>
                             </div>
                         </div>
-
                     </div>
                 </div>
+                <umb-empty-state ng-if="!vm.config.groups.length" style="padding:12px">
+                    <localize key="content_listViewNoItems">There are no items show in the list.</localize>
+                </umb-empty-state>
+            </div>
 
-                <div class="mt3">
-                    <button type="button" class="btn" ng-click="$ctrl.add()">Add rules</button>
-                    <button type="button" class="btn btn-success" ng-click="$ctrl.save()">
-                        Save
-                    </button>
+            <div class="flex justify-between items-center" style="margin:20px 0 8px">
+                <div style="font-size: 16px;" class="bold">
+                    <localize key="clip_contentTypeLimits">Content type limits</localize>
                 </div>
-            </umb-box-content>
-        </umb-box>
-    </umb-editor-container>
-</umb-editor-view>
+                <umb-button type="button"
+                            button-style="outline"
+                            state="init"
+                            action="vm.addContentTypeLimit()"
+                            label-key="general_add">
+                </umb-button>
+            </div>
+
+            <div class="umb-table">
+                <div class="umb-table-head">
+                    <div class="umb-table-row">
+                        <div class="umb-table-cell">
+
+                        </div>
+                        <div class="umb-table-cell">
+                            <localize key="clip_contentType">Content type</localize>
+                        </div>
+                        <div class="umb-table-cell">
+                            <localize key="clip_maxItemsOfType">Max items of type</localize>
+                        </div>
+                        <div class="umb-table-cell">
+                            <localize key="clip_currentItemsOfType">Current items of type</localize>
+                        </div>
+                        <div class="umb-table-cell">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="umb-table-body" ng-if="vm.config.contentTypeCounts.length">
+                    <div ng-repeat="type in vm.config.contentTypeCounts track by $index" class="umb-table-row">
+                        <div class="umb-table-cell">
+                            <umb-icon icon="{{ type.icon }}" class="umb-table-body__icon umb-table-body__fileicon umb-icon"></umb-icon>
+                        </div>
+                        <div class="umb-table-cell">
+                            <div class="umb-table-body__link">{{ type.name }}</div>
+                        </div>
+                        <div class="umb-table-cell">
+                            <input type="number" ng-model="type.max" />
+                        </div>
+                        <div class="umb-table-cell">
+                            {{ type.count }}
+                        </div>
+                        <div class="umb-table-cell">
+                            <div class="umb-node-preview__actions">
+                                <button type="button"
+                                        class="umb-node-preview__action umb-node-preview__action--red"
+                                        ng-click="vm.removeContentTypeCount($index)">
+                                    <localize key="general_remove">Remove</localize>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <umb-empty-state ng-if="!vm.config.contentTypeCounts.length" style="padding:12px">
+                    <localize key="content_listViewNoItems">There are no items show in the list.</localize>
+                </umb-empty-state>
+            </div>
+        </umb-editor-container>
+        <umb-editor-footer>
+            <umb-editor-footer-content-right>
+                <umb-button type="button"
+                            button-style="success"
+                            shortcut="ctrl+s"
+                            action="vm.save()"
+                            label-key="general_save">
+                </umb-button>
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-view>
+</div>

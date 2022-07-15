@@ -34,7 +34,7 @@ namespace Clip.Web.Controllers
             if (root is null) return root;
 
             root.RoutePath = $"{UmbConstants.Applications.Settings}/{Constants.TreeAlias}/overview";
-            root.Icon = UmbConstants.Icons.LogViewer;
+            root.Icon = UmbConstants.Icons.Folder;
             root.HasChildren = false;
             root.MenuUrl = null;
 
