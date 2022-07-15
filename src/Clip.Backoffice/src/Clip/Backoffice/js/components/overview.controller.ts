@@ -152,7 +152,7 @@ export class OverviewController {
 
     save() {
         let config: IClipConfigModel = {
-            groups: [],
+            groups: [], 
             contentTypeCounts: this.config.contentTypeCounts,
         };
 
@@ -163,7 +163,7 @@ export class OverviewController {
             });
         });
 
-        this.clipService.set(config)
+        this.clipService.save(config)
             .then(
                 resp => this.notificationsService.success('Success', resp),
                 err => this.notificationsService.error('Error', err),

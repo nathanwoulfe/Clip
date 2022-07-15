@@ -6,7 +6,7 @@ using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Extensions;
 
-namespace Clip.Web
+namespace Clip.Web.Handlers
 {
     public class ServerVariablesParsingNotificationHandler : INotificationHandler<ServerVariablesParsingNotification>
     {
@@ -32,7 +32,7 @@ namespace Clip.Web
             notification.ServerVariables.Add("Clip", new Dictionary<string, object>
             {
                 { "pluginPath", $"{umbracoSettings["appPluginsPath"]}/Clip/Backoffice" },
-                { "configurationApiBaseUrl", _linkGenerator.GetUmbracoApiServiceBaseUrl<ConfigurationController>(x => x.GetConfig()) ?? "" },
+                { "configurationApiBaseUrl", _linkGenerator.GetUmbracoApiServiceBaseUrl<ConfigurationController>(x => x.Get()) ?? "" },
             });
         }        
     }

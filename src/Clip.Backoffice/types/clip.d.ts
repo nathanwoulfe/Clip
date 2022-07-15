@@ -22,9 +22,5 @@ interface IClipGroupConfigModel {
 
 interface IClipService {
     get: () => Promise<IClipConfigModel>;
-    set: (config: IClipConfigModel) => Promise<any>;
-}
-
-interface IClipInterceptor {
-//    response: (result: { data: string, config: { url: string } }) => any;
+    save: (config: IClipConfigModel) => Promise<any>;
 }
