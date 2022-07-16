@@ -115,5 +115,5 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'Publish zip and nuget from staging directory'
   inputs:
-    artifactName: 'Blip'
+    artifactName: 'Clip.Umbraco'
     targetPath: '$(Build.ArtifactStagingDirectory)'
