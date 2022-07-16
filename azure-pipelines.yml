@@ -11,8 +11,6 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  - name: DEV_BRANCH
-    value: 'refs/heads/v1/dev'
   - name: OUT_DIR
     value: '../nupkgs'
   - name: NPM_CONFIG_CACHE
@@ -32,7 +30,6 @@ steps:
   inputs: 
     targetType: 'inline'
     script: |
-      ## $configuration = If ($Env:BUILD_SOURCEBRANCH -eq '$(DEV_BRANCH)') { 'DEBUG' } Else { 'RELEASE' }
       $configuration = 'RELEASE'
       echo "source branch = $Env:BUILD_SOURCEBRANCH"
       echo "configuration = $configuration"
