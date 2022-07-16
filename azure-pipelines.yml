@@ -83,11 +83,10 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: 'Restore dotnet dependencies'
   inputs:
-    command: restore
-    projects: $(PROJECTS)
-    selectOrConfig: config
-    nugetConfigPath: NuGet.config
-    verbosityRestore: Minimal
+    command: 'restore'
+    projects: '$(PROJECTS)'
+    feedsToUse: 'select'
+    verbosityRestore: 'Minimal'
 
 - task: DotNetCoreCLI@2
   displayName: 'Pack the Web and Backoffice projects'
