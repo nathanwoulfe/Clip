@@ -9,9 +9,8 @@ export const paths = {
     viewsProd: [`${backofficePath}/**/*.html`, `!${backofficePath}/**/components/**/*.html`],
     scss: `${backofficePath}/**/*.scss`,
     lang: `./src/Clip/Lang/*.xml`,
-    manifest: './src/Clip/package.manifest',
-    dest: './App_Plugins/Clip/',
-    site: '../../Clip.Umbraco.Site/App_Plugins/Clip/',
+    dest: '../Clip/wwwroot/',
+    site: '../Clip/wwwroot/',
 };
 
 export const config = {

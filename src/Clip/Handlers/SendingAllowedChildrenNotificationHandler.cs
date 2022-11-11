@@ -1,8 +1,9 @@
-﻿using Clip.Web.Services;
+﻿using Clip.Models;
+using Clip.Services;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
 
-namespace Clip.Web.Handlers
+namespace Clip.Handlers
 {
     public class SendingAllowedChildrenNotificationHandler : INotificationHandler<SendingAllowedChildrenNotification>
     {
@@ -18,7 +19,7 @@ namespace Clip.Web.Handlers
         {
             if (notification is null || !notification.Children.Any()) return;
 
-            var config = _configService.GetConfigurationModel();
+            ClipConfigurationModel config = _configService.GetConfigurationModel();
 
             // remove any types not permitted for this user
             notification.Children = notification.Children.Where(x => !config.AllowedChildren.Any() || config.AllowedChildren.Contains(x.Key));

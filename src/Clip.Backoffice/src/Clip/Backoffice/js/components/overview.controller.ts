@@ -10,6 +10,8 @@ export class OverviewController {
 
     contentTypeSyncModel: { [key: string]: Array<UmbContentType> } = {};
 
+    private _filterCssClass = 'not-allowed not-published';
+
     constructor(
         private $q,
         private clipService: IClipService,
@@ -24,50 +26,44 @@ export class OverviewController {
         type.icon = this.allContentTypes.find(t => t.key === type.key)?.icon;
     }
 
-    $onInit() {
+    $onInit = async () => {
         const promises = [
-            this.contentTypeResource.getAll(),            
+            this.contentTypeResource.getAll(),
             this.clipService.get(),
             this.userGroupsResource.getUserGroups({ onlyCurrentUserGroups: false }),
             this.localizationService.localize('treeHeaders_contentCreationRules'),
-        ]
+        ];
 
-        this.$q.all(promises)
-            .then(resp => {
-                this.allContentTypes = resp[0];
-                this.config = resp[1];
-                this.groups = resp[2];
-                this.name = resp[3];
+        [this.allContentTypes, this.config, this.groups, this.name] = await this.$q.all(promises);
 
-                this.config.groups.forEach(c => {
-                    if (!c.groupId) return;
+        this.config.groups.forEach(c => {
+            if (!c.groupId) return;
 
-                    const group = this.groups.find(g => g.id == c.groupId);
-                    if (!group) return;
+            const group = this.groups.find(g => g.id == c.groupId);
+            if (!group) return;
 
-                    c.icon = group?.icon;
-                    c.groupName = group?.name;
+            c.icon = group?.icon;
+            c.groupName = group?.name;
 
-                    let contentTypeSyncModel: Array<UmbContentType> = [];
+            let contentTypeSyncModel: Array<UmbContentType> = [];
 
-                    c.contentTypeKeys.forEach(key => {
-                        const contentType = this.allContentTypes.find(x => x.key === key);
-                        if (!contentType) return;
+            c.contentTypeKeys.forEach(key => {
+                const contentType = this.allContentTypes.find(x => x.key === key);
+                if (!contentType) return;
 
-                        contentTypeSyncModel.push(contentType);
-                    });
-
-                    this.contentTypeSyncModel[c.groupId] = contentTypeSyncModel;
-                });
-
-                this.config.contentTypeCounts.forEach(c => {
-                    const type = this.allContentTypes.find(t => t.key === c.key);
-                    if (!type) return;
-
-                    c.icon = type.icon;
-                    c.name = type.name;
-                })
+                contentTypeSyncModel.push(contentType);
             });
+
+            this.contentTypeSyncModel[c.groupId] = contentTypeSyncModel;
+        });
+
+        this.config.contentTypeCounts.forEach(c => {
+            const type = this.allContentTypes.find(t => t.key === c.key);
+            if (!type) return;
+
+            c.icon = type.icon;
+            c.name = type.name;
+        });
     }
 
     removeGroup = index => {
@@ -102,7 +98,7 @@ export class OverviewController {
     addContentType(groupId) {
         const typePickerOptions = {
             multiPicker: false,
-            filterCssClass: 'not-allowed not-published',
+            filterCssClass: this._filterCssClass,
             filter: item => (this.contentTypeSyncModel[groupId] || [])
                 .some(x => x.id == item.id), // coerce string to int                
             submit: model => {
@@ -111,7 +107,7 @@ export class OverviewController {
 
                 this._getContentTypeIcon(value);
                 valueArray.push(value);
-                
+
                 this.contentTypeSyncModel[groupId] = valueArray;
                 this.editorService.close();
             },
@@ -129,7 +125,7 @@ export class OverviewController {
     addContentTypeLimit() {
         const typePickerOptions = {
             multiPicker: false,
-            filterCssClass: 'not-allowed not-published',
+            filterCssClass: this._filterCssClass,
             filter: item => this.config.contentTypeCounts.some(x => x.id == item.id), // coerce string to int                
             submit: model => {
                 const value: IClipContentTypeCountModel = model.selection[0];
@@ -152,7 +148,7 @@ export class OverviewController {
 
     save() {
         let config: IClipConfigModel = {
-            groups: [], 
+            groups: [],
             contentTypeCounts: this.config.contentTypeCounts,
         };
 

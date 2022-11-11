@@ -1,32 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <ContentTargetFolders>.</ContentTargetFolders>
-    <Id>Clip.Umbraco.Backoffice</Id>
-    <PackageId>Clip.Umbraco.Backoffice</PackageId>
-    <Title>Clip.Umbraco.Backoffice</Title>
-    <Description>The backoffice bits - do not install this package directly, install Clip.Umbraco instead</Description>
+    <IsPackable>false</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <IncludeSymbols>false</IncludeSymbols>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="App_Plugins\Clip\**\*.*">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-      <PackagePath>content\App_Plugins\Clip</PackagePath>
-    </Content>
-    <None Include="build\**\*.*">
-      <Pack>True</Pack>
-      <PackagePath>buildTransitive</PackagePath>
-    </None>
-    <None Include="package.json" />
-    <None Include="src\*.*" />
-    <Compile Remove="node_modules\**" />
-    <Compile Remove="src\Clip\NewFolder\**" />
-    <EmbeddedResource Remove="node_modules\**" />
-    <EmbeddedResource Remove="src\Clip\NewFolder\**" />
-    <None Remove="node_modules\**" />
-    <None Remove="src\Clip\NewFolder\**" />
-  </ItemGroup>
+  </PropertyGroup>  
 </Project>
 

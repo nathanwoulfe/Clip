@@ -2,6 +2,20 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
+      "Umbraco.Cms.Web.BackOffice": {
+        "type": "Direct",
+        "requested": "[10.0.0, )",
+        "resolved": "10.0.0",
+        "contentHash": "OwAgBm/0QhHWTjdfnlO5X7a0n99FVsNSs0G0kQcFL0vX7UaniS6ii2FofizMPyK/LMqfY2phGtt8TzzYh13Uiw==",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1",
+          "Serilog.AspNetCore": "5.0.0",
+          "Umbraco.Cms.Core": "10.0.0",
+          "Umbraco.Cms.Examine.Lucene": "10.0.0",
+          "Umbraco.Cms.Infrastructure": "10.0.0",
+          "Umbraco.Cms.Web.Common": "10.0.0"
+        }
+      },
       "Umbraco.Cms.Web.Website": {
         "type": "Direct",
         "requested": "[10.0.0, )",
@@ -2209,19 +2223,6 @@
           "Umbraco.Cms.Infrastructure": "10.0.0"
         }
       },
-      "Umbraco.Cms.Web.BackOffice": {
-        "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "OwAgBm/0QhHWTjdfnlO5X7a0n99FVsNSs0G0kQcFL0vX7UaniS6ii2FofizMPyK/LMqfY2phGtt8TzzYh13Uiw==",
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.1",
-          "Serilog.AspNetCore": "5.0.0",
-          "Umbraco.Cms.Core": "10.0.0",
-          "Umbraco.Cms.Examine.Lucene": "10.0.0",
-          "Umbraco.Cms.Infrastructure": "10.0.0",
-          "Umbraco.Cms.Web.Common": "10.0.0"
-        }
-      },
       "Umbraco.Cms.Web.Common": {
         "type": "Transitive",
         "resolved": "10.0.0",
@@ -2239,16 +2240,6 @@
           "Umbraco.Cms.Examine.Lucene": "10.0.0",
           "Umbraco.Cms.Infrastructure": "10.0.0",
           "Umbraco.Cms.PublishedCache.NuCache": "10.0.0"
-        }
-      },
-      "Clip.Umbraco.Backoffice": {
-        "type": "Project"
-      },
-      "clip.web": {
-        "type": "Project",
-        "dependencies": {
-          "Umbraco.Cms.Web.BackOffice": "10.0.0",
-          "Umbraco.Cms.Web.Website": "10.0.0"
         }
       }
     }

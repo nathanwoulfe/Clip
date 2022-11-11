@@ -8,7 +8,7 @@ trigger:
     - refs/tags/v*
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
   - name: OUT_DIR
@@ -17,9 +17,7 @@ variables:
     value: $(Pipeline.Workspace)/.npm  
   - name: PROJECTS
     value: >-
-      src/Clip.Web/Clip.Web.csproj
-  
-      src/Clip.Backoffice/Clip.Backoffice.csproj
+      src/Clip/Clip.csproj
   - name: NUGET_PACKAGES
     value: $(Pipeline.Workspace)/.nuget/packages
 
@@ -92,7 +90,7 @@ steps:
   displayName: 'Pack the Web and Backoffice projects'
   inputs:
     command: 'pack'
-    packagesToPack: 'src/Clip.Web/Clip.Web.csproj;src/Clip.Backoffice/Clip.Backoffice.csproj;src/Clip/Clip.csproj'
+    packagesToPack: 'src/Clip/Clip.csproj'
     configuration: '$(CONFIGURATION)'
     packDirectory: '$(OUT_DIR)'
     includesymbols: true

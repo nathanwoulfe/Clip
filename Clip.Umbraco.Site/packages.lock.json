@@ -2361,11 +2361,11 @@
           "Umbraco.Cms.Web.Common": "10.0.0"
         }
       },
-      "clip.web": {
+      "Clip.Umbraco": {
         "type": "Project",
         "dependencies": {
-          "Umbraco.Cms.Web.BackOffice": "10.0.0",
-          "Umbraco.Cms.Web.Website": "10.0.0"
+          "Umbraco.Cms.Web.BackOffice": "[10.0.0, )",
+          "Umbraco.Cms.Web.Website": "[10.0.0, )"
         }
       }
     }

@@ -10,12 +10,6 @@ import { views } from './gulp/views';
 // set env from args
 config.prod = process.argv.indexOf('--prod') > -1;
 
-function manifest() {
-    return gulp.src(paths.manifest)
-        .pipe(gulpif(!config.prod, gulp.dest(paths.site)))
-        .pipe(gulpif(config.prod, gulp.dest(paths.dest)));
-};
-
 function lang() {
     const lang = 'Lang';
     return gulp.src(paths.lang)
@@ -29,10 +23,9 @@ export const prod = gulp.task('prod',
         clean,
         gulp.parallel(
             js,
-            scss,
+            //scss,
             views,
             lang,
-            manifest
         )));
 
 export const dev = gulp.task('dev',
@@ -40,19 +33,15 @@ export const dev = gulp.task('dev',
         clean,
         gulp.parallel(
             js,
-            scss,
+            //scss,
             views,
             lang,
-            manifest,
             done => {
-
                 console.log('watching for changes... ctrl+c to exit');
                 gulp.watch(paths.js, gulp.series(js, views));
-                gulp.watch(paths.scss, gulp.series(scss, views));
+                //gulp.watch(paths.scss, gulp.series(scss, views));
                 gulp.watch(paths.viewsDev, gulp.series(views, js));
                 gulp.watch(paths.lang, gulp.series(lang));
-                gulp.watch(paths.manifest, gulp.series(manifest));
-
                 done();
             }
         )));

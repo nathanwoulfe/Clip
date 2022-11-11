@@ -1,15 +1,13 @@
 <Project>
 	<PropertyGroup>
 		<VersionPrefix>1.0.0</VersionPrefix>
-		<VersionSuffix>rc1</VersionSuffix>
+		<VersionSuffix></VersionSuffix>
 		<Authors>Nathan Woulfe</Authors>
-		<Copyright>Nathan Woulfe 2022</Copyright>
-		<PackageIconUrl></PackageIconUrl>
+    <Copyright>Copyright © Nathan Woulfe $([System.DateTime]::Today.ToString('yyyy'))</Copyright>
+    <PackageIcon>icon.png</PackageIcon>
 
 		<PackageProjectUrl>https://github.com/nathanwoulfe/clip</PackageProjectUrl>
-		<PackageTags>Umbraco;UmbracoCms</PackageTags>
-
-		<RepositoryUrl>https://github.com/nathanwoulfe/blip</RepositoryUrl>
+		<RepositoryUrl>https://github.com/nathanwoulfe/clip</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
@@ -17,5 +15,11 @@
 		<DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
 		<NoWarn>$(NoWarn);NU5128;NU5125</NoWarn>
 		<LangVersion>10.0</LangVersion>
-	</PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="" Visible="false" />
+  </ItemGroup>
 </Project>

@@ -1,9 +1,0 @@
-{
-  "javascript": [
-    "~/App_Plugins/Clip/Backoffice/js/clip.js"
-  ],
-  "css": [
-    "~/App_Plugins/Clip/Backoffice/css/styles.css"
-  ],
-  "bundleOptions": "None",
-} 

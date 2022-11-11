@@ -9,7 +9,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Cms.Web.Common.ModelBinders;
 using UmbConstants = Umbraco.Cms.Core.Constants;
 
-namespace Clip.Web.Controllers
+namespace Clip.Controllers
 {
     [Tree(UmbConstants.Applications.Settings, Constants.TreeAlias, SortOrder = 20, TreeGroup = UmbConstants.Trees.Groups.Settings)]
     [PluginController(Constants.Name)]
