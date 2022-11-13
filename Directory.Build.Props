@@ -5,8 +5,9 @@
 		<Authors>Nathan Woulfe</Authors>
     <Copyright>Copyright © Nathan Woulfe $([System.DateTime]::Today.ToString('yyyy'))</Copyright>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
 
-		<PackageProjectUrl>https://github.com/nathanwoulfe/clip</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/nathanwoulfe/clip</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/nathanwoulfe/clip</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 

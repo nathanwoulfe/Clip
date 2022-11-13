@@ -47,13 +47,11 @@ Easy!
 
 ## Getting started
 
-Install Clip via NuGet: `Install-Package Clip.Umbraco`.
+Install Clip: `dotnet add package Clip.Umbraco` or `Install-Package Clip.Umbraco`.
 
 After restarting your site, you'll find a new node in the settings tree - 'Content Creation Rules'.
 
 The view allows adding rules for user groups and content type limits.
-
-These values are stored in the UmbracoKeyValue table, nice and easy and no need for custom tables.
 
 ## Contributing
 

@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
-    <Product>Clip</Product>
     <Title>Clip</Title>
-    <Id>Clip.Umbraco</Id>
     <PackageId>Clip.Umbraco</PackageId>
     <Description>Content creation restrictions for Umbraco CMS</Description>
     <PackageTags>umbraco umbraco-cms umbraco-marketplace</PackageTags>
@@ -11,7 +9,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
-		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[10.0.0, 12)" />
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[10.0.0, 12)" />
 	</ItemGroup>
 </Project>
