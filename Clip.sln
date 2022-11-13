@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		localbuild.ps1 = localbuild.ps1
 		NuGet.config = NuGet.config
 		README.md = README.md
+		umbraco-marketplace.json = umbraco-marketplace.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clip.Backoffice", "src\Clip.Backoffice\Clip.Backoffice.csproj", "{A7F523D1-CE39-4EAC-885D-C392BB263EBC}"
