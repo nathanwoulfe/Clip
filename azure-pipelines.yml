@@ -60,7 +60,7 @@ steps:
 - task: Cache@2
   displayName: 'NPM cache'
   inputs:
-    key: 'npm | "$(Agent.OS)" | ./src/Clip.Backoffice/package-lock.json'
+    key: 'npm | "$(Agent.OS)" | ./src/Clip/Backoffice/package-lock.json'
     restoreKeys: |
        npm | "$(Agent.OS)"
     path: $(NPM_CONFIG_CACHE)
@@ -69,13 +69,13 @@ steps:
   displayName: 'NPM install'
   inputs:
     command: 'install'
-    workingDir: './src/Clip.Backoffice'
+    workingDir: './src/Clip/Backoffice'
 
 - task: Npm@1
   displayName: 'Build Backoffice'
   inputs:
     command: 'custom'
-    workingDir: './src/Clip.Backoffice'
+    workingDir: './src/Clip/Backoffice'
     customCommand: 'run prod'
 
 - task: DotNetCoreCLI@2
