@@ -2,7 +2,7 @@ trigger:
   batch: true
   branches:
     include:
-    - v11/dev
+    - main
   tags:
     include:
     - refs/tags/release-*
@@ -18,10 +18,10 @@ parameters:
     default: false
 
 variables:
-  SOLUTION: Umbraco.Workflow.sln
+  SOLUTION: Clip.sln
   CONFIGURATION: Release
   NODE_VERSION: 16.x
-  DOTNET_VERSION: 7.x
+  DOTNET_VERSION: 6.x
   DOTNET_PREVIEW: true
   DOTNET_NOLOGO: true
   DOTNET_GENERATE_ASPNET_CERTIFICATE: false
@@ -36,7 +36,7 @@ stages:
     jobs:
       - job: Build
         pool: 
-          vmImage: ubuntu-latest
+          vmImage: windows-latest
         steps:
           - task: NodeTool@0
             displayName: Use Node.js $(NODE_VERSION)
@@ -98,7 +98,7 @@ stages:
             displayName: NPM install
             inputs:
               command: install
-              workingDir: './src/Umbraco.Workflow.Backoffice'     
+              workingDir: './src/Clip/Backoffice'     
               
           - script: dotnet restore $(SOLUTION)
             condition: or(not(${{ parameters.cache_nuget }}), ne(variables.CACHE_NUGET_RESTORED, true))
@@ -108,7 +108,7 @@ stages:
             displayName: Build Backoffice
             inputs:
               command: custom
-              workingDir: './src/Umbraco.Workflow.Backoffice'
+              workingDir: './src/Clip/Backoffice'
               customCommand: 'run prod'
 
           - script: dotnet build $(SOLUTION) --configuration $(CONFIGURATION) --no-restore -p:ContinuousIntegrationBuild=true
