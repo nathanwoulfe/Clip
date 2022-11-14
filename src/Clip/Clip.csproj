@@ -7,28 +7,7 @@
     <IncludeSymbols>false</IncludeSymbols>
     <StaticWebAssetBasePath>App_Plugins/Clip</StaticWebAssetBasePath>
     <ImplicitUsings>enable</ImplicitUsings>
-
-    <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
-    <Authors>Nathan Woulfe</Authors>
-    <Copyright>Copyright © Nathan Woulfe $([System.DateTime]::Today.ToString('yyyy'))</Copyright>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-
-    <PackageProjectUrl>https://github.com/nathanwoulfe/clip</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/nathanwoulfe/clip</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-
-    <NoWarn>$(NoWarn);NU5128;NU5125</NoWarn>
-    <LangVersion>10.0</LangVersion>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
-  <ItemGroup>
-    
-    <Content Include="$(MSBuildThisFileDirectory)../../icon.png" Pack="true" PackagePath="" Visible="false" />
-    <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="\"/>
-  </ItemGroup>
   
 	<ItemGroup>
 		<PackageReference Include="Umbraco.Cms.Web.Website" Version="10.*" />
