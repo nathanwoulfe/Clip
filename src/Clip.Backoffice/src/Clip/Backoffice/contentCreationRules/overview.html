@@ -1,4 +1,21 @@
-<div ng-controller="Clip.Overview.Controller as vm">
+<div ng-controller="Clip.Overview.Controller as vm" class="clip">
+    <style>
+
+        .content-type-counts .umb-editor-sub-header {
+            margin-top: 0.25rem;
+        }
+
+        @media (min-width:1700px) {
+            .clip .flex-mid {
+                display: flex;
+                gap: 32px;
+            }
+
+            .content-type-counts .umb-editor-sub-header {
+                margin-top: -10px;
+            }
+        }
+    </style>
     <umb-editor-view footer="true">
         <umb-editor-header name="vm.name"
                            name-locked="true"
@@ -7,7 +24,7 @@
                            hide-alias="true">
         </umb-editor-header>
         <umb-editor-container>
-            <div class="flex" style="gap:32px">
+            <div class="flex-mid">
                 <div style="flex:1">
                     <div class="umb-editor-sub-header justify-start items-center mb0">
                         <h5>
@@ -69,7 +86,7 @@
                                         <button type="button"
                                                 class="umb-node-preview__action umb-node-preview__action--red"
                                                 ng-click="vm.removeGroup($index)">
-                                            <localize key="clip_removeGroup">Remove group</localize>
+                                            <localize key="general_remove">Remove</localize>
                                         </button>
                                     </div>
                                 </div>
@@ -82,7 +99,7 @@
                     </umb-empty-state>
 
                 </div>
-                <div style="flex:1">
+                <div style="flex:1" class="content-type-counts">
                     <div class="umb-editor-sub-header justify-start items-center mb0">
                         <h5>
                             <localize key="clip_contentTypeLimits">Content type limits</localize>

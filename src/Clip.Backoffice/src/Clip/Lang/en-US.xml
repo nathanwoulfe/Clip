@@ -6,12 +6,11 @@
 	<area alias="clip">
 		<key alias="addContentType">Add content type</key>
 		<key alias="allowedContentTypes">Allowed content types</key>
-		<key alias="removeGroup">Remove group</key>
 		<key alias="userGroupRules">User group rules</key>
 		<key alias="contentTypeLimits">Content Type limits</key>
 		<key alias="maxItemsOfType">Max items of type</key>
 		<key alias="currentItemsOfType">Current items of type</key>
-		<key alias="userGroup">User group</key>
 		<key alias="contentType">Content type</key>
-	</area>
+    <key alias="rulesUpdated">Content Creation Rules updated</key>
+  </area>
 </language>

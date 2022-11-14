@@ -32,12 +32,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OverviewController = void 0;
 class OverviewController {
-    constructor($q, clipService, editorService, localizationService, notificationsService, contentTypeResource, userGroupsResource) {
+    constructor($q, clipService, editorService, localizationService, contentTypeResource, userGroupsResource) {
         this.$q = $q;
         this.clipService = clipService;
         this.editorService = editorService;
         this.localizationService = localizationService;
-        this.notificationsService = notificationsService;
         this.contentTypeResource = contentTypeResource;
         this.userGroupsResource = userGroupsResource;
         this.groups = [];
@@ -150,18 +149,19 @@ class OverviewController {
         this.config.contentTypeCounts.splice(idx, 1);
     }
     save() {
-        let config = {
-            groups: [],
-            contentTypeCounts: this.config.contentTypeCounts,
-        };
-        Object.keys(this.contentTypeSyncModel).forEach(k => {
-            config.groups.push({
-                groupId: +k,
-                contentTypeKeys: this.contentTypeSyncModel[+k].map(x => x.key)
+        return __awaiter(this, void 0, void 0, function* () {
+            let config = {
+                groups: [],
+                contentTypeCounts: this.config.contentTypeCounts,
+            };
+            Object.keys(this.contentTypeSyncModel).forEach(k => {
+                config.groups.push({
+                    groupId: +k,
+                    contentTypeKeys: this.contentTypeSyncModel[+k].map(x => x.key)
+                });
             });
+            yield this.clipService.save(config);
         });
-        this.clipService.save(config)
-            .then(resp => this.notificationsService.success('Success', resp), err => this.notificationsService.error('Error', err));
     }
 }
 exports.OverviewController = OverviewController;

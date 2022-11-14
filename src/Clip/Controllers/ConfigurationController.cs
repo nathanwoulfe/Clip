@@ -1,8 +1,11 @@
 ﻿using Clip.Models;
 using Clip.Services;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Cms.Core.Models.ContentEditing;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
+using Umbraco.Extensions;
 
 namespace Clip.Controllers;
 
@@ -12,8 +15,13 @@ namespace Clip.Controllers;
 public class ConfigurationController : UmbracoAuthorizedApiController
 {
     private readonly IConfigurationService _configService;
+    private readonly ILocalizedTextService _localizedTextService;
 
-    public ConfigurationController(IConfigurationService configService) =>  _configService = configService;        
+    public ConfigurationController(IConfigurationService configService, ILocalizedTextService localizedTextService)
+    {
+        _configService = configService;
+        _localizedTextService = localizedTextService;
+    }
 
 
     /// <summary>
@@ -37,6 +45,17 @@ public class ConfigurationController : UmbracoAuthorizedApiController
     public IActionResult Save(ClipConfigurationModel model)
     {
         _configService.Save(model);
-        return Ok();
+
+        var notification = new BackOfficeNotification()
+        {
+            NotificationType = NotificationStyle.Success,
+            Header = _localizedTextService.Localize("general", "success"),
+            Message = _localizedTextService.Localize("clip", "rulesUpdated"),
+        };
+
+        return Ok(new
+        {
+            notifications = new[] { notification },
+        });
     }
 }

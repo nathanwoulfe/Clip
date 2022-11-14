@@ -17,7 +17,6 @@ export class OverviewController {
         private clipService: IClipService,
         private editorService,
         private localizationService,
-        private notificationsService,
         private contentTypeResource,
         private userGroupsResource) {
     }
@@ -146,7 +145,7 @@ export class OverviewController {
         this.config.contentTypeCounts.splice(idx, 1);
     }
 
-    save() {
+    async save() {
         let config: IClipConfigModel = {
             groups: [],
             contentTypeCounts: this.config.contentTypeCounts,
@@ -159,10 +158,6 @@ export class OverviewController {
             });
         });
 
-        this.clipService.save(config)
-            .then(
-                resp => this.notificationsService.success('Success', resp),
-                err => this.notificationsService.error('Error', err),
-            );
+        await this.clipService.save(config);            
     }
 }

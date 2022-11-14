@@ -2364,8 +2364,8 @@
       "Clip.Umbraco": {
         "type": "Project",
         "dependencies": {
-          "Umbraco.Cms.Web.BackOffice": "[10.0.0, )",
-          "Umbraco.Cms.Web.Website": "[10.0.0, )"
+          "Umbraco.Cms.Web.BackOffice": "[10.0.0, 12.0.0)",
+          "Umbraco.Cms.Web.Website": "[10.0.0, 12.0.0)"
         }
       }
     }

@@ -4,7 +4,7 @@
     "net6.0": {
       "Umbraco.Cms.Web.BackOffice": {
         "type": "Direct",
-        "requested": "[10.0.0, )",
+        "requested": "[10.0.0, 12.0.0)",
         "resolved": "10.0.0",
         "contentHash": "OwAgBm/0QhHWTjdfnlO5X7a0n99FVsNSs0G0kQcFL0vX7UaniS6ii2FofizMPyK/LMqfY2phGtt8TzzYh13Uiw==",
         "dependencies": {
@@ -18,7 +18,7 @@
       },
       "Umbraco.Cms.Web.Website": {
         "type": "Direct",
-        "requested": "[10.0.0, )",
+        "requested": "[10.0.0, 12.0.0)",
         "resolved": "10.0.0",
         "contentHash": "f2x3OXEsitYGGJ53I52FiyaUgyeGJ4wy18e6Jr2GQylKonqSKl+bWGu0PJ/3f5VEwYY4gT0sO/9WEj9zs21Ozg==",
         "dependencies": {
