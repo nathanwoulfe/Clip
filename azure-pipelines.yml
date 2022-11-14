@@ -38,7 +38,7 @@ steps:
   inputs:
     targetType: 'inline'      
     script: |
-      $xml = [Xml] (Get-Content .\Directory.Build.props)
+      $xml = [Xml] (Get-Content .\Directory.Build.Props)
       $prefix = $xml.Project.PropertyGroup.VersionPrefix
       $suffix = $xml.Project.PropertyGroup.VersionSuffix
    
