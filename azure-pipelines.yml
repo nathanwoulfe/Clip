@@ -5,113 +5,127 @@ trigger:
     - main
   tags:
     include:
-    - refs/tags/v*
+    - refs/tags/release-*
 
-pool:
-  vmImage: 'ubuntu-latest'
+parameters:
+  - name: cache_npm
+    displayName: Cache NPM packages
+    type: boolean
+    default: true
+  - name: cache_nuget
+    displayName: Cache NuGet packages
+    type: boolean
+    default: false
 
 variables:
-  - name: OUT_DIR
-    value: '../nupkgs'
-  - name: NPM_CONFIG_CACHE
-    value: $(Pipeline.Workspace)/.npm  
-  - name: PROJECTS
-    value: >-
-      src/Clip/Clip.csproj
-  - name: NUGET_PACKAGES
-    value: $(Pipeline.Workspace)/.nuget/packages
+  SOLUTION: Clip.sln
+  CONFIGURATION: Release
+  NODE_VERSION: 16.x
+  DOTNET_VERSION: 6.x
+  DOTNET_PREVIEW: true
+  DOTNET_NOLOGO: true
+  DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
 
-steps:
+stages: 
+  - stage: Build
+    variables:
+      NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
+      npm_config_cache: $(Pipeline.Workspace)/.npm_client
+    jobs:
+      - job: Build
+        pool: 
+          vmImage: ubuntu-latest
+        steps:
+          - task: NodeTool@0
+            displayName: Use Node.js $(NODE_VERSION)
+            inputs:
+              versionSpec: $(NODE_VERSION)
 
-- task: PowerShell@2
-  displayName: 'Get configuration'
-  inputs: 
-    targetType: 'inline'
-    script: |
-      $configuration = 'RELEASE'
-      echo "source branch = $Env:BUILD_SOURCEBRANCH"
-      echo "configuration = $configuration"
-      echo "##vso[task.setvariable variable=CONFIGURATION]$configuration"
+          - task: NuGetAuthenticate@1
+            displayName: Authenticate NuGet
 
-- task: PowerShell@2
-  displayName: 'Get version from csproj'
-  inputs:
-    targetType: 'inline'      
-    script: |
-      $xml = [Xml] (Get-Content .\Directory.Build.Props)
-      $prefix = $xml.Project.PropertyGroup.VersionPrefix
-      $suffix = $xml.Project.PropertyGroup.VersionSuffix
+          - task: UseDotNet@2
+            displayName: Use .Net $(DOTNET_VERSION)
+            inputs:
+              version: $(DOTNET_VERSION)
+              includePreviewVersions: $(DOTNET_PREVIEW)
+
+          - task: PowerShell@2
+            displayName: Get version from csproj
+            inputs:
+              targetType: inline      
+              script: |
+                $buildTag = If ($Env:BUILD_SOURCEBRANCH.StartsWith('refs/tags/release-')) { 'RELEASE' } Else { 'CONTINUOUS' }
+                Write-Host "##vso[build.addbuildtag]$buildTag"
+
+                $xml = [Xml] (Get-Content .\Directory.Build.props)
+                $prefix = $xml.Project.PropertyGroup.VersionPrefix
+                $suffix = If ($xml.Project.PropertyGroup.VersionSuffix) { '-' + $xml.Project.PropertyGroup.VersionSuffix } Else { '' }
+
+                $date = $(Get-Date -Format dd-MM-yyyy)
    
-      echo "prefix = $prefix | suffix = $suffix | build = $Env:BUILD_BUILDID"
+                Write-Host "prefix = $prefix | suffix = $suffix | build = $Env:BUILD_BUILDID | date = $date | buildTag = $buildTag"
       
-      If ($suffix) {
-        echo "##vso[task.setvariable variable=VERSION]$prefix-$suffix.$Env:BUILD_BUILDID" } 
-      Else { 
-        echo "##vso[task.setvariable variable=VERSION]$prefix" }
+                If ($buildTag -eq 'RELEASE') {
+                  Write-Host "##vso[task.setvariable variable=VERSION]$prefix$suffix" } 
+                Else {
+                  Write-Host "##vso[task.setvariable variable=VERSION]$prefix$suffix.$date.$Env:BUILD_BUILDID" }                 
 
-- task: Cache@2
-  inputs:
-    key: 'nuget | "$(Agent.OS)" | ./src/Clip/packages.lock.json'
-    restoreKeys: |
-       nuget | "$(Agent.OS)"
-    path: $(NUGET_PACKAGES)
-  displayName: 'NuGet cache'
+          - task: Cache@2
+            displayName: Cache NPM packages
+            condition: ${{ parameters.cache_npm }}
+            inputs:
+              key: 'npm | "$(Agent.OS)" | **/package-lock.json, !**/node_modules/**'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+                npm
+              path: $(npm_config_cache)
 
-- task: Cache@2
-  displayName: 'NPM cache'
-  inputs:
-    key: 'npm | "$(Agent.OS)" | ./src/Clip/Backoffice/package-lock.json'
-    restoreKeys: |
-       npm | "$(Agent.OS)"
-    path: $(NPM_CONFIG_CACHE)
+          - task: Cache@2
+            condition: ${{ parameters.cache_nuget }}
+            displayName: Cache NuGet packages
+            inputs:
+              key: 'nuget | "$(Agent.OS)" | **/packages.lock.json'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
+                nuget
+              path: $(NUGET_PACKAGES)
+              cacheHitVar: 'CACHE_NUGET_RESTORED'
 
-- task: Npm@1
-  displayName: 'NPM install'
-  inputs:
-    command: 'install'
-    workingDir: './src/Clip/Backoffice'
+          - task: Npm@1
+            displayName: NPM install
+            inputs:
+              command: install
+              workingDir: './src/Clip/Backoffice'     
+              
+          - script: dotnet restore $(SOLUTION)
+            condition: or(not(${{ parameters.cache_nuget }}), ne(variables.CACHE_NUGET_RESTORED, true))
+            displayName: Restore NuGet packages
 
-- task: Npm@1
-  displayName: 'Build Backoffice'
-  inputs:
-    command: 'custom'
-    workingDir: './src/Clip/Backoffice'
-    customCommand: 'run prod'
+          - task: Npm@1
+            displayName: Build Backoffice
+            inputs:
+              command: custom
+              workingDir: './src/Clip/.Backoffice'
+              customCommand: 'run prod'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Restore dotnet dependencies'
-  inputs:
-    command: 'restore'
-    projects: '$(PROJECTS)'
-    feedsToUse: 'select'
-    verbosityRestore: 'Minimal'
+          - script: dotnet build $(SOLUTION) --configuration $(CONFIGURATION) --no-restore -p:ContinuousIntegrationBuild=true
+            displayName: Run dotnet build
 
-- task: DotNetCoreCLI@2
-  displayName: 'Pack the Web and Backoffice projects'
-  inputs:
-    command: 'pack'
-    packagesToPack: 'src/Clip/Clip.csproj'
-    configuration: '$(CONFIGURATION)'
-    packDirectory: '$(OUT_DIR)'
-    includesymbols: true
-    verbosityPack: Minimal
-    versioningScheme: byEnvVar
-    versionEnvVar: VERSION
+          - script: dotnet pack $(SOLUTION) --configuration $(CONFIGURATION) --no-restore --output $(Build.ArtifactStagingDirectory)/nupkg
+            displayName: Run dotnet pack
 
-- task: CopyFiles@2
-  displayName: 'Copy package files from OutDir to staging directory'
-  inputs:     
-    SourceFolder: '$(OUT_DIR)'
-    Contents: |
-      *.nupkg
-      *.snupkg
-      !*.symbols.nupkg
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    CleanTargetFolder: true
-    OverWrite: true
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Nuget packages
+            inputs:
+              artifactName: nupkg
+              targetPath: $(Build.ArtifactStagingDirectory)/nupkg
 
-- task: PublishPipelineArtifact@1
-  displayName: 'Publish zip and nuget from staging directory'
-  inputs:
-    artifactName: 'Clip.Umbraco'
-    targetPath: '$(Build.ArtifactStagingDirectory)'
+          - task: PublishPipelineArtifact@1
+            displayName: Publish build output
+            inputs:
+              targetPath: $(Build.SourcesDirectory)
+              artifactName: build_output               
+ 
