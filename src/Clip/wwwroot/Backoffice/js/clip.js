@@ -9,6 +9,7 @@ angular.module(name, [
     _module_1.ComponentsModule,
 ]);
 angular.module('umbraco').requires.push(name);
+
 },{"./components/_module":2,"./services/_module":4}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -18,6 +19,7 @@ exports.ComponentsModule = angular
     .module('clip.components', [])
     .controller(overview_controller_1.OverviewController.controllerName, overview_controller_1.OverviewController)
     .name;
+
 },{"./overview.controller":3}],3:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -166,6 +168,7 @@ class OverviewController {
 }
 exports.OverviewController = OverviewController;
 OverviewController.controllerName = 'Clip.Overview.Controller';
+
 },{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -175,6 +178,7 @@ exports.ServicesModule = angular
     .module('clip.services', [])
     .factory(service_1.ClipService.serviceName, service_1.ClipService)
     .name;
+
 },{"./service":5}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -194,6 +198,7 @@ class ClipService {
 }
 exports.ClipService = ClipService;
 ClipService.serviceName = 'clipService';
-},{}]},{},[1,5,4,3,2])
+
+},{}]},{},[1,3,2,5,4]);
 
 //# sourceMappingURL=clip.js.map

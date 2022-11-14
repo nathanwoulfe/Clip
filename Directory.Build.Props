@@ -5,22 +5,20 @@
 		<Authors>Nathan Woulfe</Authors>
     <Copyright>Copyright © Nathan Woulfe $([System.DateTime]::Today.ToString('yyyy'))</Copyright>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <PackageProjectUrl>https://github.com/nathanwoulfe/clip</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/nathanwoulfe/clip</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 
-		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-		<RestoreLockedMode>false</RestoreLockedMode>
-		<DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
 		<NoWarn>$(NoWarn);NU5128;NU5125</NoWarn>
-		<LangVersion>10.0</LangVersion>
-    <TargetFramework>net6.0</TargetFramework>
+		<LangVersion>11.0</LangVersion>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>

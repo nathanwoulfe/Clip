@@ -9,8 +9,8 @@ export const paths = {
     viewsProd: [`${backofficePath}/**/*.html`, `!${backofficePath}/**/components/**/*.html`],
     scss: `${backofficePath}/**/*.scss`,
     lang: `./src/Clip/Lang/*.xml`,
-    dest: '../Clip/wwwroot/',
-    site: '../Clip/wwwroot/',
+    dest: '../wwwroot/',
+    site: '../wwwroot/',
 };
 
 export const config = {
