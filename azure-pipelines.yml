@@ -13,7 +13,6 @@ parameters:
 variables:
   nodeVersion: 16.17.x
   solution: Clip.sln
-  project: /src/Clip/Clip.csproj
   buildConfiguration: Release
   DOTNET_NOLOGO: true
   DOTNET_GENERATE_ASPNET_CERTIFICATE: false
@@ -86,7 +85,7 @@ stages:
               workingDir: './src/Clip/Backoffice'
               customCommand: 'run prod'
 
-          - script: dotnet build $(project) --configuration $(buildConfiguration) --no-restore -p:ContinuousIntegrationBuild=true
+          - script: dotnet build $(solution) --configuration $(buildConfiguration) --no-restore -p:ContinuousIntegrationBuild=true
             displayName: Run dotnet build
 
           - script: dotnet pack $(solution) --configuration $(buildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/nupkg
