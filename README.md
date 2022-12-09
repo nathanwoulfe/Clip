@@ -1,3 +1,5 @@
+One of the great features of Umbraco's backoffice is the permissions model applied to content types - developers can implement a tightly controlled information architecture by configuring the parent-child relationships between those content types.
+
 One of the great features of Umbraco's backoffice is the permissions model applied to document (and media) types - developers can implement a tightly controlled information architecture by configuring the parent-child relationships between those document types.
 
 That's lovely, and allows developers plenty of control over how the site is ultimately structured.
@@ -9,7 +11,7 @@ However, there are a couple of gaps in how that model works:
 
 Fret not, Clip is here to help.
 
-## Control who creates what
+# Control who creates what
 
 We know Umbraco offers lots of flexibility, but sometimes we need to reign that in a little.
 
@@ -19,7 +21,7 @@ Clip adds this functionality to the backoffice by allowing administrators to set
 
 When creating new items, the allowed child node list is filtered to include only the permitted types.
 
-## Control how many of each type
+# Control how many of each type
 
 Sometimes it doesn't make sense to allow more than one instance of a document or media type.
 
@@ -39,7 +41,7 @@ When creating new items, the allowed child node list is filtered to include only
 
 The two latter options above are true assuming the document/media type has not hit a configured limit. 
 
-## Why Clip?
+# Why Clip?
 
 Clip follows hot on the heels of [Flip](https://github.com/nathanwoulfe/flip) and [Blip](https://github.com/nathanwoulfe/blip), so obviously needed to follow the silly naming pattern.
 
@@ -51,7 +53,7 @@ Clip trims the allowed child types.
 
 Easy!
 
-## Getting started
+# Getting started
 
 Install Clip: `dotnet add package Clip.Umbraco`.
 
@@ -59,6 +61,6 @@ After restarting your site, you'll find a new node in the settings tree - 'Conte
 
 The view allows adding rules for user groups and content type limits.
 
-## Contributing
+# Contributing
 
 Sure, pull requests are more than welcome. Go for it.
