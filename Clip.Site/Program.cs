@@ -12,8 +12,8 @@ namespace Clip.Site
                 .ConfigureUmbracoDefaults()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStaticWebAssets();
-                    webBuilder.UseStartup<Startup>();
+                    _ = webBuilder.UseStaticWebAssets();
+                    _ = webBuilder.UseStartup<Startup>();
                 });
     }
 }

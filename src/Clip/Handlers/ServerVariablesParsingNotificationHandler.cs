@@ -1,4 +1,4 @@
-﻿using Clip.Controllers;
+using Clip.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
@@ -13,6 +13,11 @@ public class ServerVariablesParsingNotificationHandler : INotificationHandler<Se
     private readonly IRuntimeState _runtimeState;
     private readonly LinkGenerator _linkGenerator;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServerVariablesParsingNotificationHandler"/> class.
+    /// </summary>
+    /// <param name="linkGenerator"></param>
+    /// <param name="runtimeState"></param>
     public ServerVariablesParsingNotificationHandler(
         LinkGenerator linkGenerator,
         IRuntimeState runtimeState)
@@ -24,7 +29,9 @@ public class ServerVariablesParsingNotificationHandler : INotificationHandler<Se
     public void Handle(ServerVariablesParsingNotification notification)
     {
         if (_runtimeState.Level != RuntimeLevel.Run)
+        {
             return;
+        }
 
         Dictionary<string, object> umbracoSettings =
             notification.ServerVariables["umbracoSettings"] as Dictionary<string, object> ?? new Dictionary<string, object>();
@@ -34,5 +41,5 @@ public class ServerVariablesParsingNotificationHandler : INotificationHandler<Se
             { "pluginPath", $"{umbracoSettings["appPluginsPath"]}/Clip/Backoffice" },
             { "configurationApiBaseUrl", _linkGenerator.GetUmbracoApiServiceBaseUrl<ConfigurationController>(x => x.Get()) ?? "" },
         });
-    }        
+    }
 }

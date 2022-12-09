@@ -1,4 +1,4 @@
-﻿using Clip.Models;
+using Clip.Models;
 using Clip.Services;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models.ContentEditing;
@@ -12,15 +12,22 @@ public class SendingAllowedChildrenNotificationHandler : INotificationHandler<Se
 {
     private readonly IConfigurationService _configService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SendingAllowedChildrenNotificationHandler"/> class.
+    /// </summary>
+    /// <param name="configService"></param>
     public SendingAllowedChildrenNotificationHandler(IConfigurationService configService) => _configService = configService;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="notification"></param>
     public void Handle(SendingAllowedChildrenNotification notification)
     {
-        if (notification is null || !notification.Children.Any()) return;
+        if (notification is null || !notification.Children.Any())
+        {
+            return;
+        }
 
         ClipConfigurationModel config = _configService.GetConfigurationModel();
 
@@ -32,16 +39,19 @@ public class SendingAllowedChildrenNotificationHandler : INotificationHandler<Se
         // remove any types not permitted for this user
         notification.Children = config.AllowedChildren.Any()
             ? notification.Children.Where(c => IsValidChild(c, config, isMediaRequest))
-            : Enumerable.Empty<ContentTypeBasic>();            
+            : Enumerable.Empty<ContentTypeBasic>();
 
-        if (!notification.Children.Any()) return;
+        if (!notification.Children.Any())
+        {
+            return;
+        }
 
         // next remove any types where the current count has no capacity for more
         notification.Children = notification.Children.Where(x => HasCapacity(x, config));
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="c"></param>
     /// <param name="config"></param>
@@ -56,7 +66,7 @@ public class SendingAllowedChildrenNotificationHandler : INotificationHandler<Se
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="c"></param>
     /// <param name="config"></param>
@@ -71,14 +81,14 @@ public class SendingAllowedChildrenNotificationHandler : INotificationHandler<Se
             return true;
         }
 
-        // if getting media types, and this is type is not in allowed children, type is not permitted 
+        // if getting media types, and this is type is not in allowed children, type is not permitted
         // would have returned true above if it were listed
         if (isMediaRequest && config.AllowedChildren.Any(x => x.Contains(UdiEntityType.MediaType)))
         {
             return false;
         }
 
-        // if getting document types, and this is type is not in allowed children, type is not permitted 
+        // if getting document types, and this is type is not in allowed children, type is not permitted
         // would have returned true above if it were listed
         if (!isMediaRequest && config.AllowedChildren.Any(x => x.Contains(UdiEntityType.DocumentType)))
         {

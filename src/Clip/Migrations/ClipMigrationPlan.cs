@@ -4,6 +4,9 @@ namespace Clip.Migrations;
 
 public class ClipMigrationPlan : MigrationPlan
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipMigrationPlan"/> class.
+    /// </summary>
     public ClipMigrationPlan() : base(Constants.Name)
     {
         DefinePlan();
@@ -13,7 +16,7 @@ public class ClipMigrationPlan : MigrationPlan
 
     protected void DefinePlan()
     {
-        From(InitialState)
+        _ = From(InitialState)
             .To<Clip_AddConfigTable>(Clip_AddConfigTable.Key);
     }
 }

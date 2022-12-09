@@ -1,4 +1,4 @@
-﻿using Clip.Migrations;
+using Clip.Migrations;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Migrations;
@@ -9,6 +9,7 @@ using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace Clip.Handlers;
 
+
 internal class ApplicationStartedHandler : INotificationHandler<UmbracoApplicationStartedNotification>
 {
     private readonly IRuntimeState _runtimeState;
@@ -16,9 +17,17 @@ internal class ApplicationStartedHandler : INotificationHandler<UmbracoApplicati
     private readonly IScopeProvider _scopeProvider;
     private readonly IKeyValueService _keyValueService;
 
-    public ApplicationStartedHandler(IRuntimeState runtimeState, 
-        IMigrationPlanExecutor migrationPlanExecutor, 
-        IKeyValueService keyValueService, 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ApplicationStartedHandler"/> class.
+    /// </summary>
+    /// <param name="runtimeState"></param>
+    /// <param name="migrationPlanExecutor"></param>
+    /// <param name="keyValueService"></param>
+    /// <param name="scopeProvider"></param>
+    public ApplicationStartedHandler(
+        IRuntimeState runtimeState,
+        IMigrationPlanExecutor migrationPlanExecutor,
+        IKeyValueService keyValueService,
         IScopeProvider scopeProvider)
     {
         _runtimeState = runtimeState;
@@ -27,11 +36,15 @@ internal class ApplicationStartedHandler : INotificationHandler<UmbracoApplicati
         _scopeProvider = scopeProvider;
     }
 
+    /// <inheritdoc/>
     public void Handle(UmbracoApplicationStartedNotification notification)
     {
-        if (_runtimeState.Level != RuntimeLevel.Run) return;
+        if (_runtimeState.Level != RuntimeLevel.Run)
+        {
+            return;
+        }
 
         Upgrader? upgrader = new(new ClipMigrationPlan());
-        upgrader.Execute(_migrationPlanExecutor, _scopeProvider, _keyValueService);
+        _ = upgrader.Execute(_migrationPlanExecutor, _scopeProvider, _keyValueService);
     }
 }

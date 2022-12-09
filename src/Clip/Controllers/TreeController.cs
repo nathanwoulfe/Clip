@@ -15,6 +15,12 @@ namespace Clip.Controllers
     [PluginController(Constants.Name)]
     public class ClipTreeController : TreeController
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClipTreeController"/> class.
+        /// </summary>
+        /// <param name="localizedTextService"></param>
+        /// <param name="umbracoApiControllerTypeCollection"></param>
+        /// <param name="eventAggregator"></param>
         public ClipTreeController(
             ILocalizedTextService localizedTextService,
             UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection,
@@ -27,11 +33,17 @@ namespace Clip.Controllers
         {
             ActionResult<TreeNode?> rootResult = base.CreateRootNode(queryStrings);
 
-            if (rootResult.Result is not null) return rootResult;            
+            if (rootResult.Result is not null)
+            {
+                return rootResult;
+            }
 
             TreeNode? root = rootResult.Value;
 
-            if (root is null) return root;
+            if (root is null)
+            {
+                return root;
+            }
 
             root.RoutePath = $"{UmbConstants.Applications.Settings}/{Constants.TreeAlias}/overview";
             root.Icon = UmbConstants.Icons.Folder;

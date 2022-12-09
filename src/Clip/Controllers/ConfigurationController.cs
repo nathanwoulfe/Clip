@@ -1,4 +1,4 @@
-﻿using Clip.Models;
+using Clip.Models;
 using Clip.Services;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Models.ContentEditing;
@@ -17,6 +17,11 @@ public class ConfigurationController : UmbracoAuthorizedApiController
     private readonly IConfigurationService _configService;
     private readonly ILocalizedTextService _localizedTextService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConfigurationController"/> class.
+    /// </summary>
+    /// <param name="configService"></param>
+    /// <param name="localizedTextService"></param>
     public ConfigurationController(IConfigurationService configService, ILocalizedTextService localizedTextService)
     {
         _configService = configService;
@@ -25,7 +30,7 @@ public class ConfigurationController : UmbracoAuthorizedApiController
 
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <returns></returns>
     [HttpGet]
@@ -37,7 +42,7 @@ public class ConfigurationController : UmbracoAuthorizedApiController
 
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>

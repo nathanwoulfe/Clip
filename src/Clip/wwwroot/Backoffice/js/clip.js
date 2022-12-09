@@ -15,6 +15,7 @@ var EntityType;
     EntityType["DocumentType"] = "document-type";
     EntityType["MediaType"] = "media-type";
 })(EntityType = exports.EntityType || (exports.EntityType = {}));
+
 },{"./components/_module":2,"./services/_module":6}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,6 +29,7 @@ exports.ComponentsModule = angular
     .component(overview_component_1.OverviewComponent.name, overview_component_1.OverviewComponent)
     .component(type_limits_table_component_1.TypeLimitsTableComponent.name, type_limits_table_component_1.TypeLimitsTableComponent)
     .name;
+
 },{"./overview.component":3,"./overview.controller":4,"./type-limits-table.component":5}],3:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -263,6 +265,7 @@ exports.OverviewComponent = {
         syncModel: '=',
     },
 };
+
 },{"../clip":1}],4:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -303,6 +306,7 @@ class OverviewController {
 }
 exports.OverviewController = OverviewController;
 OverviewController.controllerName = 'Clip.Overview.Controller';
+
 },{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -428,6 +432,7 @@ exports.TypeLimitsTableComponent = {
     template,
     controller: TypeLimitsTable
 };
+
 },{"../clip":1}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -437,6 +442,7 @@ exports.ServicesModule = angular
     .module('clip.services', [])
     .factory(service_1.ClipService.serviceName, service_1.ClipService)
     .name;
+
 },{"./service":7}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -456,6 +462,7 @@ class ClipService {
 }
 exports.ClipService = ClipService;
 ClipService.serviceName = 'clipService';
-},{}]},{},[1,3,4,5,2,7,6])
+
+},{}]},{},[1,3,4,5,2,7,6]);
 
 //# sourceMappingURL=clip.js.map

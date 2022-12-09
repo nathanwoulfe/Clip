@@ -1,4 +1,4 @@
-﻿using Umbraco.Cms.Core;
+using Umbraco.Cms.Core;
 
 namespace Clip.Models;
 
@@ -12,6 +12,9 @@ public class ClipConfigurationModel
 
     public Dictionary<string, int> ExistingItemCounts { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClipConfigurationModel"/> class.
+    /// </summary>
     public ClipConfigurationModel()
     {
         AllowedChildren = Enumerable.Empty<string>();

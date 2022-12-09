@@ -45,20 +45,20 @@ namespace Clip.Site
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                _ = app.UseDeveloperExceptionPage();
             }
 
             app.UseUmbraco()
                 .WithMiddleware(u =>
                 {
-                    u.UseBackOffice();
-                    u.UseWebsite();
+                    _ = u.UseBackOffice();
+                    _ = u.UseWebsite();
                 })
                 .WithEndpoints(u =>
                 {
-                    u.UseInstallerEndpoints();
-                    u.UseBackOfficeEndpoints();
-                    u.UseWebsiteEndpoints();
+                    _ = u.UseInstallerEndpoints();
+                    _ = u.UseBackOfficeEndpoints();
+                    _ = u.UseWebsiteEndpoints();
                 });
         }
     }

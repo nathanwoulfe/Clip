@@ -11,11 +11,11 @@ public class WebComposer : IComposer
 {
     public void Compose(IUmbracoBuilder builder)
     {
-        builder.ManifestFilters().Append<ClipManifestFilter>();
+        _ = builder.ManifestFilters().Append<ClipManifestFilter>();
 
-        builder.Services.AddTransient<IConfigurationService, ConfigurationService>();
+        _ = builder.Services.AddTransient<IConfigurationService, ConfigurationService>();
 
-        builder
+        _ = builder
             .AddNotificationHandler<UmbracoApplicationStartedNotification, ApplicationStartedHandler>()
             .AddNotificationHandler<SendingAllowedChildrenNotification, SendingAllowedChildrenNotificationHandler>()
             .AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesParsingNotificationHandler>();
