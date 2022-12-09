@@ -1,7 +1,9 @@
-﻿namespace Clip.Models;
+﻿using Umbraco.Cms.Core;
+
+namespace Clip.Models;
 
 public class GroupConfigurationModel
 {
     public int GroupId { get; set; }
-    public IEnumerable<Guid> ContentTypeKeys { get; set; } = new List<Guid>();
+    public IEnumerable<Udi> Udis { get; set; } = Enumerable.Empty<Udi>();
 }

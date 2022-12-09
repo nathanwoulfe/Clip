@@ -9,3 +9,8 @@ angular.module(name, [
 ]);
 
 angular.module('umbraco').requires.push(name);
+
+export enum EntityType {
+    DocumentType = 'document-type',
+    MediaType = 'media-type',
+}

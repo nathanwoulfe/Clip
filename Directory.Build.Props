@@ -1,7 +1,5 @@
 <Project>
 	<PropertyGroup>
-		<VersionPrefix>1.0.0</VersionPrefix>
-		<VersionSuffix></VersionSuffix>
 		<Authors>Nathan Woulfe</Authors>
     <Copyright>Copyright © Nathan Woulfe $([System.DateTime]::Today.ToString('yyyy'))</Copyright>
     <PackageIcon>icon.png</PackageIcon>
@@ -12,10 +10,21 @@
 		<RepositoryType>git</RepositoryType>
 
 		<NoWarn>$(NoWarn);NU5128;NU5125</NoWarn>
-		<LangVersion>10.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <TargetFramework>net6.0</TargetFramework>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <Nullable>enable</Nullable>
+    <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.5.113" PrivateAssets="all" IsImplicitlyDefined="true" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435" PrivateAssets="all" IsImplicitlyDefined="true" />
+    <PackageReference Include="Umbraco.Code" Version="2.0.0" PrivateAssets="all" IsImplicitlyDefined="true" />
+    <PackageReference Include="Umbraco.GitVersioning.Extensions" Version="0.2.0" PrivateAssets="all" IsImplicitlyDefined="true" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="" />

@@ -1,11 +1,4 @@
-trigger:
-  batch: true
-  branches:
-    include:
-    - main
-  tags:
-    include:
-    - refs/tags/release-*
+name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
 parameters:
   - name: cache_npm
@@ -18,11 +11,9 @@ parameters:
     default: false
 
 variables:
-  SOLUTION: Clip.sln
-  CONFIGURATION: Release
-  NODE_VERSION: 16.x
-  DOTNET_VERSION: 6.x
-  DOTNET_PREVIEW: true
+  nodeVersion: 16.17.x
+  solution: Clip.sln
+  buildConfiguration: Release
   DOTNET_NOLOGO: true
   DOTNET_GENERATE_ASPNET_CERTIFICATE: false
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -36,46 +27,30 @@ stages:
     jobs:
       - job: Build
         pool: 
-          vmImage: windows-latest
+          vmImage: ubuntu-latest
         steps:
-          - task: NodeTool@0
-            displayName: Use Node.js $(NODE_VERSION)
-            inputs:
-              versionSpec: $(NODE_VERSION)
+          # Checkout source (avoid shallow clone to calculate version height)
+          - checkout: self
+            fetchDepth: 0
 
+          # Setup build environment
           - task: NuGetAuthenticate@1
             displayName: Authenticate NuGet
 
+          - task: NodeTool@0
+            displayName: Use Node.js $(nodeVersion)
+            inputs:
+              versionSpec: $(nodeVersion)
+
           - task: UseDotNet@2
-            displayName: Use .Net $(DOTNET_VERSION)
+            displayName: Use .NET SDK from global.json
             inputs:
-              version: $(DOTNET_VERSION)
-              includePreviewVersions: $(DOTNET_PREVIEW)
+              useGlobalJson: true         
 
-          - task: PowerShell@2
-            displayName: Get version from csproj
-            inputs:
-              targetType: inline      
-              script: |
-                $buildTag = If ($Env:BUILD_SOURCEBRANCH.StartsWith('refs/tags/release-')) { 'RELEASE' } Else { 'CONTINUOUS' }
-                Write-Host "##vso[build.addbuildtag]$buildTag"
-
-                $xml = [Xml] (Get-Content .\Directory.Build.props)
-                $prefix = $xml.Project.PropertyGroup.VersionPrefix
-                $suffix = If ($xml.Project.PropertyGroup.VersionSuffix) { '-' + $xml.Project.PropertyGroup.VersionSuffix } Else { '' }
-
-                $date = $(Get-Date -Format dd-MM-yyyy)
-   
-                Write-Host "prefix = $prefix | suffix = $suffix | build = $Env:BUILD_BUILDID | date = $date | buildTag = $buildTag"
-      
-                If ($buildTag -eq 'RELEASE') {
-                  Write-Host "##vso[task.setvariable variable=VERSION]$prefix$suffix" } 
-                Else {
-                  Write-Host "##vso[task.setvariable variable=VERSION]$prefix$suffix.$date.$Env:BUILD_BUILDID" }                 
-
+          # Cache and restore NPM packages
           - task: Cache@2
-            displayName: Cache NPM packages
             condition: ${{ parameters.cache_npm }}
+            displayName: Cache NPM packages
             inputs:
               key: 'npm | "$(Agent.OS)" | **/package-lock.json, !**/node_modules/**'
               restoreKeys: |
@@ -83,26 +58,25 @@ stages:
                 npm
               path: $(npm_config_cache)
 
+          # Cache and restore NuGet packages
           - task: Cache@2
             condition: ${{ parameters.cache_nuget }}
             displayName: Cache NuGet packages
             inputs:
-              key: 'nuget | "$(Agent.OS)" | **/packages.lock.json'
+              key: 'nuget | "$(Agent.OS)" | **/packages.lock.json, !**/bin/**, !**/obj/**'
               restoreKeys: |
                 nuget | "$(Agent.OS)"
                 nuget
               path: $(NUGET_PACKAGES)
-              cacheHitVar: 'CACHE_NUGET_RESTORED'
+
+          - script: dotnet restore $(solution) --locked-mode
+            displayName: Restore NuGet packages
 
           - task: Npm@1
             displayName: NPM install
             inputs:
               command: install
-              workingDir: './src/Clip/Backoffice'     
-              
-          - script: dotnet restore $(SOLUTION)
-            condition: or(not(${{ parameters.cache_nuget }}), ne(variables.CACHE_NUGET_RESTORED, true))
-            displayName: Restore NuGet packages
+              workingDir: './src/Clip/Backoffice'  
 
           - task: Npm@1
             displayName: Build Backoffice
@@ -111,10 +85,10 @@ stages:
               workingDir: './src/Clip/Backoffice'
               customCommand: 'run prod'
 
-          - script: dotnet build $(SOLUTION) --configuration $(CONFIGURATION) --no-restore -p:ContinuousIntegrationBuild=true
+          - script: dotnet build $(solution) --configuration $(buildConfiguration) --no-restore -p:ContinuousIntegrationBuild=true
             displayName: Run dotnet build
 
-          - script: dotnet pack $(SOLUTION) --configuration $(CONFIGURATION) --no-restore --output $(Build.ArtifactStagingDirectory)/nupkg
+          - script: dotnet pack $(solution) --configuration $(buildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/nupkg
             displayName: Run dotnet pack
 
           - task: PublishPipelineArtifact@1

@@ -6,6 +6,7 @@
 
 interface UmbContentType {
     id: number;
+    udi: string;
     key: string;
     icon: string;
     name: string;

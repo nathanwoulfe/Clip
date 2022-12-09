@@ -5,7 +5,7 @@
     "ImageUrl": "https://github.com/nathanwoulfe.png"
   },
   "Category": "CMS Extensions",
-  "LicenseType": "Free",
+  "LicenseTypes": [ "Free" ],
   "IssueTrackerUrl": "https://github.com/nathanwoulfe/clip/issues",
   "PackageType": "Package"
 }

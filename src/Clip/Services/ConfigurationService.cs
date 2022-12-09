@@ -1,9 +1,11 @@
 ﻿using Clip.Models;
 using Newtonsoft.Json;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models.Membership;
 using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Infrastructure.Scoping;
+using Umbraco.Extensions;
 
 namespace Clip.Services;
 
@@ -18,14 +20,15 @@ public interface IConfigurationService
 
 internal class ConfigurationService : IConfigurationService
 {
-    private const string _ExistingItemCountQuery = @"SELECT Count(*) as Count, n.uniqueID as [Key]
-                FROM umbracoContent C
-                INNER JOIN cmsContentType CT ON CT.nodeId = C.contentTypeId
-                INNER JOIN umbracoContentVersion V ON V.nodeId = C.nodeId
-                INNER JOIN umbracoNode N on N.id = CT.nodeId
-                WHERE V.[current] = 1 AND CT.isElement = 0
-                GROUP BY N.uniqueID, CT.alias
-                ORDER BY N.uniqueID";
+    private const string _ExistingItemCountQuery = @"
+        SELECT Count(*) as Count, n.uniqueId, n.nodeObjectType
+        FROM umbracoContent C
+        INNER JOIN cmsContentType CT ON CT.nodeId = C.contentTypeId
+        INNER JOIN umbracoContentVersion V ON V.nodeId = C.nodeId
+        INNER JOIN umbracoNode N on N.id = CT.nodeId
+        WHERE V.[current] = 1 AND CT.isElement = 0
+        GROUP BY N.uniqueID, CT.alias
+        ORDER BY N.uniqueID";
 
     private readonly IScopeProvider _scopeProvider;
     private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
@@ -55,7 +58,11 @@ internal class ConfigurationService : IConfigurationService
 
         foreach (ContentTypeCount c in settings.ContentTypeCounts)
         {
-            c.Count = settings.ExistingItemCounts.ContainsKey(c.Key) ? settings.ExistingItemCounts[c.Key] : 0;
+            string g = c.Udi.ToString();
+            if (settings.ExistingItemCounts.TryGetValue(g, out int count))
+            {
+                c.Count = count;
+            }            
         }
 
         return settings;
@@ -111,13 +118,13 @@ internal class ConfigurationService : IConfigurationService
     /// 
     /// </summary>
     /// <returns></returns>
-    private Dictionary<Guid, int> GetExistingItemCounts()
+    private Dictionary<string, int> GetExistingItemCounts()
     {
         using IScope scope = _scopeProvider.CreateScope();
         IEnumerable<ContentTypeCount> results = scope.Database.Query<ContentTypeCount>(_ExistingItemCountQuery);
         scope.Complete();
 
-        return results.ToDictionary(x => x.Key, x => x.Count);
+        return results.ToDictionary(x => x.Udi.ToString(), x => x.Count);
     }
 
 
@@ -127,19 +134,18 @@ internal class ConfigurationService : IConfigurationService
     /// <param name="currentUser"></param>
     /// <param name="groups"></param>
     /// <returns></returns>
-    private static IEnumerable<Guid> GetAllowedChildren(IUser currentUser, IEnumerable<GroupConfigurationModel> groups)
+    private static IEnumerable<string> GetAllowedChildren(IUser currentUser, IEnumerable<GroupConfigurationModel> groups)
     {
-        if (groups is null || !groups.Any()) return Enumerable.Empty<Guid>();
+        if (groups is null || !groups.Any()) return Enumerable.Empty<string>();
 
         // need to get all the permitted types for all groups where the current user is a member;
         IEnumerable<int> groupIds = currentUser.Groups.Select(g => g.Id);
-        IEnumerable<Guid>? allowedChildren = groups.Where(g => groupIds.Contains(g.GroupId))?.SelectMany(g => g.ContentTypeKeys);
 
-        if (allowedChildren is null || !allowedChildren.Any()) return Enumerable.Empty<Guid>();
-
-        // allowedChildren is an enumerable of comma-separated strings, so make one big comma-separated string
-        // then split the whole thing into an enumerable and remove duplicates
-        return allowedChildren.Distinct();
+        IEnumerable<string>? allowedChildren = groups
+            .Where(g => groupIds.Contains(g.GroupId))
+            .SelectMany(g => g.Udis.Select(u => u.ToString()));
+        
+        return (allowedChildren?.Any() ?? false) ? allowedChildren.Distinct() : Enumerable.Empty<string>();
     }
 
 

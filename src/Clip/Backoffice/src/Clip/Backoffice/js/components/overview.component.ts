@@ -1,0 +1,254 @@
+﻿import { EntityType } from "../clip";
+
+class Overview implements IClipOverview {
+
+    config!: IClipConfigModel;
+    groups: Array<UmbUserGroup> = [];
+    contentTypes: Array<UmbContentType> = [];
+    mediaTypes: Array<UmbContentType> = [];
+    syncModel!: { [key: string]: Array<UmbContentType> };
+
+    editorService;
+     
+    documentTypeKey = 'A2CB7800-F571-4787-9638-BC48539A0EFB';
+    mediaTypeKey = '4EA4382B-2F5A-4C2B-9587-AE9B3CF3602E';
+    filterCssClass = 'not-allowed not-published';
+
+    constructor(
+        private $q,
+        private clipService: IClipService,
+        private mediaTypeResource,
+        private userGroupsResource,
+        private contentTypeResource,
+        editorService,
+    ) {
+        this.editorService = editorService;
+    }
+
+    $onInit = async () => {
+        const promises = [
+            this.contentTypeResource.getAll(),
+            this.mediaTypeResource.getAll(),
+            this.clipService.get(),
+            this.userGroupsResource.getUserGroups({ onlyCurrentUserGroups: false }),,
+        ];
+
+        [this.contentTypes, this.mediaTypes, this.config, this.groups] = await this.$q.all(promises);
+
+        this.config.groups.forEach(g => this.populateSyncModel(g));
+
+        this.config.contentTypeCounts.forEach(c => this.populateCountModel(c));
+    }
+
+    private getTypeByUdi = (udi: IUdiModel) => {
+        const type = this.contentTypes.find(x => x.udi === udi.uriValue) || this.mediaTypes.find(x => x.udi === udi.uriValue);
+        return type;
+    }
+
+    populateCountModel = (c: IClipContentTypeCountModel) => {
+        const type = this.getTypeByUdi(c.udi);
+        if (!type) return;
+
+        c.icon = type.icon;
+        c.name = type.name;
+    }
+
+    populateSyncModel = (g: IClipGroupConfigModel) => {
+        if (!g.groupId) return;
+
+        const group = this.groups.find(x => x.id == g.groupId);
+        if (!group) return;
+
+        g.icon = group?.icon;
+        g.groupName = group?.name;
+
+        let contentTypeSyncModel: Array<UmbContentType> = [];
+
+        g.udis.forEach(udi => {
+            const type = this.getTypeByUdi(udi);
+            if (!type) return;
+
+            contentTypeSyncModel.push(type);
+        });
+
+        this.syncModel[g.groupId] = contentTypeSyncModel;
+    }
+
+    getIcon(type: { udi: string, [key: string]: any }) {
+        type.icon = (type.udi.includes(EntityType.DocumentType) ? this.contentTypes : this.mediaTypes)
+            .find(t => t.udi === type.udi)?.icon;
+    }
+
+    removeGroup = index => {
+        const g = this.config.groups[index];
+        delete this.contentTypeResource[g.groupId];
+        this.config.groups.splice(index, 1);
+    }
+
+    addGroup = () => {
+        const groupPickerOptions = {
+            submit: model => {
+                model.selection.forEach(s => {
+                    const idx = this.config.groups.findIndex(x => x.groupId == s.id);
+                    if (idx !== -1) return;
+
+                    this.config.groups.push({
+                        icon: s.icon,
+                        groupId: s.id,
+                        groupName: s.name,
+                        udis: [],
+                    });
+                });
+
+                this.editorService.close();
+            },
+            close: () => this.editorService.close()
+        };
+
+        this.editorService.userGroupPicker(groupPickerOptions);
+    }
+
+    addType(groupId, type: EntityType) {
+        const typePickerOptions = {
+            multiPicker: true,
+            filterCssClass: this.filterCssClass,
+            filter: item =>
+                item.nodeType === 'container' || item.metaData.isElement || (this.syncModel[groupId] || [])
+                    .some(x => x.id == item.id),
+            submit: model => {
+                const valueArray = this.syncModel[groupId] || [];
+
+                model.selection.forEach(value => {
+                    this.getIcon(value);
+                    valueArray.push(value);
+                });
+
+                this.syncModel[groupId] = valueArray;
+                this.editorService.close();
+            },
+            close: () => this.editorService.close()
+        };
+
+        this.openPicker(type, typePickerOptions);
+    }
+
+    removeType(type, groupId) {
+        const idx = this.syncModel[groupId].findIndex(x => x.udi === type.udi.udiValue);
+        this.syncModel[groupId].splice(idx, 1);
+    }
+
+    openPicker(type: 'document-type' | 'media-type', options: IClipPickerOptions) {
+        if (type === EntityType.DocumentType) {
+            this.editorService.contentTypePicker(options);
+        } else {
+            this.editorService.mediaTypePicker(options);
+        }
+    }
+}
+
+const template = `
+<div class="umb-editor-sub-header justify-start items-center mb0">
+    <h5>
+        <localize key="clip_userGroupRules">User group rules</localize>
+    </h5>
+    <umb-button type="button"
+                button-style="outline"
+                class="ml2"
+                state="init"
+                action="$ctrl.addGroup()"
+                label-key="general_add">
+    </umb-button>
+</div>
+
+<div class="umb-table" ng-if="$ctrl.config.groups.length">
+    <div class="umb-table-head">
+        <div class="umb-table-row">
+            <div class="umb-table-cell">
+
+            </div>
+            <div class="umb-table-cell">
+                <localize key="user_userGroup">User group</localize>
+            </div>
+            <div class="umb-table-cell">
+                <localize key="clip_allowedDocumentTypes">Allowed document types</localize>
+            </div>
+            <div class="umb-table-cell">
+                <localize key="clip_allowedMediaTypes">Allowed media types</localize>
+            </div>
+            <div class="umb-table-cell umb-table-cell--small">
+
+            </div>
+        </div>
+    </div>
+    <div class="umb-table-body">
+        <div ng-repeat="group in $ctrl.config.groups track by $index" class="umb-table-row">
+            <div class="umb-table-cell">
+                <umb-icon icon="{{ group.icon }}" class="umb-table-body__icon umb-table-body__fileicon umb-icon"></umb-icon>
+            </div>
+            <div class="umb-table-cell">
+                <div class="umb-table-body__link">{{ group.groupName }}</div>
+            </div>
+            <div class="umb-table-cell flex-column mt0">
+                <div class="mb3">
+                    <umb-node-preview ng-repeat="type in $ctrl.syncModel[group.groupId] | filter: {udi: 'document-type'}"
+                                        name="type.name"
+                                        icon="type.icon"
+                                        sortable="false"
+                                        allow-edit="false"
+                                        allow-remove="true"
+                                        on-remove="$ctrl.removeType(type, group.groupId)">
+                    </umb-node-preview>
+                </div>
+                <button type="button"
+                        class="umb-node-preview__action ml0 mr0"
+                        ng-click="$ctrl.addType(group.groupId, 'document-type')">
+                    <localize key="clip_addContentType">Add document type</localize>
+                </button>
+            </div>
+            <div class="umb-table-cell flex-column mt0">
+                <div class="mb3">
+                    <umb-node-preview ng-repeat="type in $ctrl.syncModel[group.groupId] | filter: {udi: 'media-type'}"
+                                        name="type.name"
+                                        icon="type.icon"
+                                        sortable="false"
+                                        allow-edit="false"
+                                        allow-remove="true"
+                                        on-remove="$ctrl.removeType(type, group.groupId)">
+                    </umb-node-preview>
+                </div>
+                <button type="button"
+                        class="umb-node-preview__action ml0 mr0"
+                        ng-click="$ctrl.addType(group.groupId, 'media-type')">
+                    <localize key="clip_addMediaType">Add media type</localize>
+                </button>
+            </div>
+            <div class="umb-table-cell umb-table-cell--small">
+                <div class="umb-node-preview__actions">
+                    <button type="button"
+                            class="umb-node-preview__action umb-node-preview__action--red"
+                            ng-click="$ctrl.removeGroup($index)">
+                        <localize key="general_remove">Remove</localize>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<umb-empty-state ng-if="!$ctrl.config.groups.length">
+    <localize key="content_listViewNoItems">There are no items show in the list.</localize>
+</umb-empty-state>
+
+<type-limits-table type="document-type" header-key="clip_contentTypeLimits" type-key="clip_contentType" config="$ctrl.config"></type-limits-table>
+<type-limits-table type="media-type" header-key="clip_mediaTypeLimits" type-key="clip_mediaType" config="$ctrl.config"></type-limits-table>`;
+
+export const OverviewComponent = {
+    name: 'clipOverview',
+    transclude: true,
+    template,
+    controller: Overview,
+    bindings: {
+        config: '=',
+        syncModel: '=',
+    },
+}
