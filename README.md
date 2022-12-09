@@ -1,5 +1,3 @@
-One of the great features of Umbraco's backoffice is the permissions model applied to content types - developers can implement a tightly controlled information architecture by configuring the parent-child relationships between those content types.
-
 One of the great features of Umbraco's backoffice is the permissions model applied to document (and media) types - developers can implement a tightly controlled information architecture by configuring the parent-child relationships between those document types.
 
 That's lovely, and allows developers plenty of control over how the site is ultimately structured.
