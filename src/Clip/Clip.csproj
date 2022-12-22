@@ -10,7 +10,12 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
   
-	<ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
 		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[11.0.0, 12)" />
 		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[11.0.0, 12)" />
 	</ItemGroup>
