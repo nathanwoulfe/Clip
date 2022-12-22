@@ -75,7 +75,7 @@ stages:
           - script: dotnet build $(solution) --configuration $(buildConfiguration) --no-restore -p:ContinuousIntegrationBuild=true
             displayName: Run dotnet build
 
-          - script: dotnet pack $(solution) --configuration $(buildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/nupkg
+          - script: dotnet pack $(solution) --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/nupkg
             displayName: Run dotnet pack
 
           - task: PublishPipelineArtifact@1
