@@ -46,3 +46,12 @@ Install Clip: `dotnet add package Clip.Umbraco`.
 After restarting your site, you'll find a new node in the settings tree - 'Content Creation Rules'.
 
 The view allows adding rules for user groups and content type limits.
+
+# Changelog
+
+Upgrading from v1.0 to either v10 or v11? There's some manual tomfoolery required.
+
+Since v10+ includes support for media, the underlying data store had to change which meant Clip needs to distinguish Document and Media types, as well as the actual content type.
+
+That then means there's no upgrade path without data loss (ie, if you update, you'll lose configuration). To combat that, export your existing configuration
+either manually or straight from the database, and manually re-enter same after updating. It's a bit of a pain, but a lot less painful than writing a migration to do the same.
