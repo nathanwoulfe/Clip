@@ -8,7 +8,7 @@
     -->
   <PropertyGroup>
     <ClientAssetsDirectory Condition="'$(ClientAssetsDirectory)' == ''">Backoffice\app\</ClientAssetsDirectory>
-    <ClientAssetsRestoreInputs Condition="'$(ClientAssetsRestoreInputs)' == ''">Backoffice\package-lock.json;Backoffice\package.json</ClientAssetsRestoreInputs>
+    <ClientAssetsRestoreInputs Condition="'$(ClientAssetsRestoreInputs)' == ''">package-lock.json;package.json</ClientAssetsRestoreInputs>
     <ClientAssetsRestoreOutputs Condition="'$(ClientAssetsRestoreOutputs)' == ''">Backoffice\node_modules\.package-lock.json</ClientAssetsRestoreOutputs>
     <ClientAssetsRestoreCommand Condition="'$(ClientAssetsRestoreCommand)' == ''">npm ci --no-fund --no-audit --prefer-offline --prefix /Backoffice/package.json</ClientAssetsRestoreCommand>
     <ClientAssetsBuildCommand Condition="'$(ClientAssetsBuildCommand)' == ''">npm run build --prefix ./Backoffice</ClientAssetsBuildCommand>
