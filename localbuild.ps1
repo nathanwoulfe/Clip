@@ -2,10 +2,5 @@
 rm -r -force nupkgs
 mkdir nupkgs
 
-## install backoffice dependencies
-cd ./src/Clip/Backoffice
-npm run build
-cd ../../../
-
-## pack the container 
-dotnet pack ./src/Clip/Clip.csproj -c Release -o nupkgs
+dotnet build Clip.sln --configuration Release --no-restore
+dotnet pack Clip.sln --configuration Release --no-restore --output nupkgs
