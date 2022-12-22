@@ -72,19 +72,6 @@ stages:
           - script: dotnet restore $(solution) --locked-mode
             displayName: Restore NuGet packages
 
-          - task: Npm@1
-            displayName: NPM install
-            inputs:
-              command: install
-              workingDir: './src/Clip/Backoffice'  
-
-          - task: Npm@1
-            displayName: Build Backoffice
-            inputs:
-              command: custom
-              workingDir: './src/Clip/Backoffice'
-              customCommand: 'run prod'
-
           - script: dotnet build $(solution) --configuration $(buildConfiguration) --no-restore -p:ContinuousIntegrationBuild=true
             displayName: Run dotnet build
 
