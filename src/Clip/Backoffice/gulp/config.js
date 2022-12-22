@@ -1,16 +1,22 @@
-const backofficePath = './src/Clip/Backoffice';
+const backofficePath = './app';
 
-// two directories up to the test sites
-// but build into /src
+function getOutputPath() {
+  var argv = require('minimist')(process.argv.slice(2));
+
+  var outputPath = argv['output-path'];
+  if (!outputPath) {
+    outputPath = require('./config.outputPath.js').outputPath;
+  }
+
+  return outputPath;
+}
 
 export const paths = {
     js: [`${backofficePath}/**/*.ts`],
     viewsDev: [`${backofficePath}/**/*.html`],
     viewsProd: [`${backofficePath}/**/*.html`, `!${backofficePath}/**/components/**/*.html`],
-    scss: `${backofficePath}/**/*.scss`,
-    lang: `./src/Clip/Lang/*.xml`,
-    dest: '../wwwroot/',
-    site: '../wwwroot/',
+    lang: `${backofficePath}/Lang/*.xml`,
+    dest: getOutputPath(),
 };
 
 export const config = {

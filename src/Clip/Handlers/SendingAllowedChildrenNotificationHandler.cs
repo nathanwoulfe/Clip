@@ -8,7 +8,7 @@ using static Umbraco.Cms.Core.Constants;
 
 namespace Clip.Handlers;
 
-public class SendingAllowedChildrenNotificationHandler : INotificationHandler<SendingAllowedChildrenNotification>
+internal sealed class SendingAllowedChildrenNotificationHandler : INotificationHandler<SendingAllowedChildrenNotification>
 {
     private readonly IConfigurationService _configService;
 
@@ -62,7 +62,7 @@ public class SendingAllowedChildrenNotificationHandler : INotificationHandler<Se
         string? udiString = c.Udi?.ToString();
         int existingInstancesCount = udiString is not null && config.ExistingItemCounts.ContainsKey(udiString) ? config.ExistingItemCounts[udiString] : 0;
 
-        return limitFromConfig > existingInstancesCount;
+        return limitFromConfig == 0 || limitFromConfig > existingInstancesCount;
     }
 
     /// <summary>
@@ -74,7 +74,6 @@ public class SendingAllowedChildrenNotificationHandler : INotificationHandler<Se
     /// <returns></returns>
     private static bool IsValidChild(ContentTypeBasic c, ClipConfigurationModel config, bool isMediaRequest)
     {
-
         // if child is included in allowed children
         if (c.Udi is not null && config.AllowedChildren.Contains(c.Udi.ToString()))
         {

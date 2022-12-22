@@ -8,7 +8,7 @@ using Umbraco.Extensions;
 
 namespace Clip.Handlers;
 
-public class ServerVariablesParsingNotificationHandler : INotificationHandler<ServerVariablesParsingNotification>
+internal sealed class ServerVariablesParsingNotificationHandler : INotificationHandler<ServerVariablesParsingNotification>
 {
     private readonly IRuntimeState _runtimeState;
     private readonly LinkGenerator _linkGenerator;
@@ -39,7 +39,7 @@ public class ServerVariablesParsingNotificationHandler : INotificationHandler<Se
         notification.ServerVariables.Add(Constants.Name, new Dictionary<string, object>
         {
             { "pluginPath", $"{umbracoSettings["appPluginsPath"]}/Clip/Backoffice" },
-            { "configurationApiBaseUrl", _linkGenerator.GetUmbracoApiServiceBaseUrl<ConfigurationController>(x => x.Get()) ?? "" },
+            { "configurationApiBaseUrl", _linkGenerator.GetUmbracoApiServiceBaseUrl<ConfigurationController>(x => x.Get()) ?? string.Empty },
         });
     }
 }

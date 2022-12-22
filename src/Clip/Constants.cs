@@ -1,6 +1,6 @@
-﻿namespace Clip;
+namespace Clip;
 
-public static class Constants
+internal static class Constants
 {
     public const string Name = "Clip";
     public const string Alias = "clip";

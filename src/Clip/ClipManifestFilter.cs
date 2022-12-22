@@ -13,7 +13,7 @@ internal sealed class ClipManifestFilter : IManifestFilter
         PackageName = Constants.Name,
         Scripts = new[]
             {
-                "/App_Plugins/Clip/Backoffice/js/clip.js",
+                "/App_Plugins/Clip/Backoffice/js/clip.min.js",
             },
         BundleOptions = BundleOptions.None,
     });

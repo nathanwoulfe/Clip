@@ -12,7 +12,7 @@ namespace Clip.Controllers;
 /// <summary>
 /// </summary>
 [PluginController(Constants.Name)]
-public class ConfigurationController : UmbracoAuthorizedApiController
+public sealed class ConfigurationController : UmbracoAuthorizedApiController
 {
     private readonly IConfigurationService _configService;
     private readonly ILocalizedTextService _localizedTextService;

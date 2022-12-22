@@ -12,7 +12,11 @@
   },
   "scripts": {
     "dev": "gulp dev",
-    "prod": "gulp prod --prod"
+    "build": "gulp build"
+  },
+  "engines": {
+    "node": ">=16.17",
+    "npm": ">=8.15"
   },
   "types": "types.d.ts",
   "devDependencies": {

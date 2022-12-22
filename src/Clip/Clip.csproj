@@ -8,10 +8,16 @@
     <IncludeSymbols>false</IncludeSymbols>
     <StaticWebAssetBasePath>App_Plugins/Clip</StaticWebAssetBasePath>
     <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
   
 	<ItemGroup>
 		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[10.0.0, 11)" />
 		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[10.0.0, 11)" />
 	</ItemGroup>
+  
+  <Import Project="build\Microsoft.AspNetCore.ClientAssets.targets" />
+  <Target Name="ClientAssetsBuildOutputPath" AfterTargets="ClientAssetsBuild">
+    <WriteLinesToFile File="Backoffice\gulp\config.outputPath.js" Lines="export const outputPath = '../$(IntermediateOutputPath.Replace('\', '/'))clientassets';" Overwrite="true" />
+  </Target>	
 </Project>

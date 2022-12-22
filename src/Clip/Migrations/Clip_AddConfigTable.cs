@@ -3,7 +3,7 @@ using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace Clip.Migrations;
 
-public sealed class Clip_AddConfigTable : MigrationBase
+internal sealed class Clip_AddConfigTable : MigrationBase
 {
     public const string Key = "469bae4d-c607-493c-a865-315772232849";
 

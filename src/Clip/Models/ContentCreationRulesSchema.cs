@@ -1,4 +1,4 @@
-﻿using NPoco;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace Clip.Models;
@@ -6,7 +6,7 @@ namespace Clip.Models;
 [TableName(Constants.ConfigTableName)]
 [ExplicitColumns]
 [PrimaryKey("Id", AutoIncrement = true)]
-public class ContentCreationRulesSchema
+internal sealed class ContentCreationRulesSchema
 {
     [Column("Id")]
     [PrimaryKeyColumn(AutoIncrement = true)]

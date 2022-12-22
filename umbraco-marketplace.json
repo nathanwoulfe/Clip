@@ -5,7 +5,7 @@
     "ImageUrl": "https://github.com/nathanwoulfe.png" 
   },
   "Category": "Editor Tools",
-  "LicenseType": "Free",
+  "LicenseTypes": [ "Free" ],
   "IssueTrackerUrl": "https://github.com/nathanwoulfe/clip/issues",
   "PackageType": "Package",
   "DiscussionForumUrl": "https://github.com/nathanwoulfe/clip/discussions"

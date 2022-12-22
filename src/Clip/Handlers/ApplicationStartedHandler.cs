@@ -10,7 +10,7 @@ using Umbraco.Cms.Infrastructure.Scoping;
 namespace Clip.Handlers;
 
 
-internal class ApplicationStartedHandler : INotificationHandler<UmbracoApplicationStartedNotification>
+internal sealed class ApplicationStartedHandler : INotificationHandler<UmbracoApplicationStartedNotification>
 {
     private readonly IRuntimeState _runtimeState;
     private readonly IMigrationPlanExecutor _migrationPlanExecutor;

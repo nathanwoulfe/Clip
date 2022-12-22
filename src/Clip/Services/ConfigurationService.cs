@@ -1,6 +1,5 @@
 using Clip.Models;
 using Newtonsoft.Json;
-using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models.Membership;
 using Umbraco.Cms.Core.Security;
@@ -9,18 +8,9 @@ using Umbraco.Extensions;
 
 namespace Clip.Services;
 
-public interface IConfigurationService
+internal sealed class ConfigurationService : IConfigurationService
 {
-    ClipConfigurationModel GetConfigurationModel();
-
-    void Save(ClipConfigurationModel model);
-
-    ClipConfigurationModel Get();
-}
-
-internal class ConfigurationService : IConfigurationService
-{
-    private const string _ExistingItemCountQuery = @"
+    private const string ExistingItemCountQuery = @"
         SELECT Count(*) as Count, n.uniqueId, n.nodeObjectType
         FROM umbracoContent C
         INNER JOIN cmsContentType CT ON CT.nodeId = C.contentTypeId
@@ -136,7 +126,7 @@ internal class ConfigurationService : IConfigurationService
     private Dictionary<string, int> GetExistingItemCounts()
     {
         using IScope scope = _scopeProvider.CreateScope();
-        IEnumerable<ContentTypeCount> results = scope.Database.Query<ContentTypeCount>(_ExistingItemCountQuery);
+        IEnumerable<ContentTypeCount> results = scope.Database.Query<ContentTypeCount>(ExistingItemCountQuery);
         _ = scope.Complete();
 
         return results.ToDictionary(x => x.Udi.ToString(), x => x.Count);
