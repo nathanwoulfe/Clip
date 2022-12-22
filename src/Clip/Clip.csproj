@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <Title>Clip</Title>
     <PackageId>Clip.Umbraco</PackageId>
     <Description>Content creation restrictions for Umbraco CMS</Description>
@@ -12,8 +11,8 @@
   </PropertyGroup>
   
 	<ItemGroup>
-		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[10.0.0, 11)" />
-		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[10.0.0, 11)" />
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[11.0.0, 12)" />
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[11.0.0, 12)" />
 	</ItemGroup>
   
   <Import Project="build\Microsoft.AspNetCore.ClientAssets.targets" />
