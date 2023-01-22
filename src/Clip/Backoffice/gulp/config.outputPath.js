@@ -1,1 +1,1 @@
-export const outputPath = '../obj/Release/net6.0/clientassets'
+export const outputPath = '../obj/Debug/net6.0/clientassets'
