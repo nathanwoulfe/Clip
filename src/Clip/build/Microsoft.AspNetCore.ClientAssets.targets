@@ -33,8 +33,6 @@
   <Target Name="ClientAssetsRestore" BeforeTargets="$(ClientAssetsRestoreBeforeTargets)" Inputs="$(ClientAssetsRestoreInputs)" Outputs="$(ClientAssetsRestoreOutputs)">
     <Message Text="Restoring NPM packages" Importance="high" />
     <Exec Command="$(ClientAssetsRestoreCommand)" WorkingDirectory="Backoffice" />
-    <Message Text="$(_ClientAssetsOutputFullPath)" Importance="high"/>
-
   </Target>
 
   <Target Name="ClientAssetsBuild" DependsOnTargets="ClientAssetsRestore" BeforeTargets="AssignTargetPaths" Inputs="@(ClientAssetsInputs)" Outputs="$(IntermediateOutputPath)clientassetsbuild.complete.txt">

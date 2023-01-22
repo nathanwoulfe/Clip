@@ -11,13 +11,13 @@ namespace Clip.Services;
 internal sealed class ConfigurationService : IConfigurationService
 {
     private const string ExistingItemCountQuery = @"
-        SELECT Count(*) as Count, n.uniqueId, n.nodeObjectType
+        SELECT Count(*) as Count, N.uniqueId, N.nodeObjectType
         FROM umbracoContent C
         INNER JOIN cmsContentType CT ON CT.nodeId = C.contentTypeId
         INNER JOIN umbracoContentVersion V ON V.nodeId = C.nodeId
         INNER JOIN umbracoNode N on N.id = CT.nodeId
         WHERE V.[current] = 1 AND CT.isElement = 0
-        GROUP BY N.uniqueID, CT.alias
+        GROUP BY N.uniqueID, CT.alias, N.nodeObjectType
         ORDER BY N.uniqueID";
 
     private readonly IScopeProvider _scopeProvider;

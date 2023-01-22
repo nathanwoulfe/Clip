@@ -13,7 +13,7 @@ internal sealed class ContentCreationRulesSchema
     public int Id { get; set; }
 
     [Column("Value")]
-    [Length(5000)]
+    [SpecialDbType(SpecialDbTypes.NTEXT)]
     [NullSetting(NullSetting = NullSettings.Null)]
     public string? Value { get; set; }
 }
