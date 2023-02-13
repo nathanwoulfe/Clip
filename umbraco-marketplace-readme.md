@@ -55,3 +55,7 @@ Since v10+ includes support for media, the underlying data store had to change w
 
 That then means there's no upgrade path without data loss (ie, if you update, you'll lose configuration). To combat that, export your existing configuration
 either manually or straight from the database, and manually re-enter same after updating. It's a bit of a pain, but a lot less painful than writing a migration to do the same.
+
+## Credits
+
+Icon: scissors by Joshua Weber from <a href="https://thenounproject.com/browse/icons/term/scissors/" target="_blank" title="scissor Icons">Noun Project</a>
