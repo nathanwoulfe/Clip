@@ -29,7 +29,13 @@ internal sealed class SendingAllowedChildrenNotificationHandler : INotificationH
             return;
         }
 
-        ClipConfigurationModel config = _configService.GetConfigurationModel();
+        ClipConfigurationModel? config = _configService.GetConfigurationModel();
+
+        // if nothing set, allow the normal content creation
+        if (config is null || config.AllowedChildren is null)
+        {
+            return;
+        }
 
         // when requesting doc or media, allow all if any of the other type exists
         // this is because a group may have some doc type specified, but no media, so should
@@ -74,22 +80,24 @@ internal sealed class SendingAllowedChildrenNotificationHandler : INotificationH
     /// <returns></returns>
     private static bool IsValidChild(ContentTypeBasic c, ClipConfigurationModel config, bool isMediaRequest)
     {
+        // AllowedChildren is assumed to be non-null, as this function is only called after a null-check
+
         // if child is included in allowed children
-        if (c.Udi is not null && config.AllowedChildren.Contains(c.Udi.ToString()))
+        if (c.Udi is not null && config.AllowedChildren!.Contains(c.Udi.ToString()))
         {
             return true;
         }
 
         // if getting media types, and this is type is not in allowed children, type is not permitted
         // would have returned true above if it were listed
-        if (isMediaRequest && config.AllowedChildren.Any(x => x.Contains(UdiEntityType.MediaType)))
+        if (isMediaRequest && config.AllowedChildren!.Any(x => x.Contains(UdiEntityType.MediaType)))
         {
             return false;
         }
 
         // if getting document types, and this is type is not in allowed children, type is not permitted
         // would have returned true above if it were listed
-        if (!isMediaRequest && config.AllowedChildren.Any(x => x.Contains(UdiEntityType.DocumentType)))
+        if (!isMediaRequest && config.AllowedChildren!.Any(x => x.Contains(UdiEntityType.DocumentType)))
         {
             return false;
         }

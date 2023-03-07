@@ -15,7 +15,8 @@ export class OverviewController {
         this.name = await this.localizationService.localize('treeHeaders_contentCreationRules');        
     }
 
-    async save() {
+  async save() {
+    console.log(this.syncModel);
         let config: IClipConfigModel = {
             groups: [],
             contentTypeCounts: this.config.contentTypeCounts,

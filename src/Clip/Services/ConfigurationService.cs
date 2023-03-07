@@ -72,7 +72,7 @@ internal sealed class ConfigurationService : IConfigurationService
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public ClipConfigurationModel GetConfigurationModel()
+    public ClipConfigurationModel? GetConfigurationModel()
     {
         ClipConfigurationModel model = new();
 
@@ -80,14 +80,14 @@ internal sealed class ConfigurationService : IConfigurationService
 
         if (currentUser is null)
         {
-            return model;
+            return null;
         }
 
         ClipConfigurationModel? settings = GetInternal();
 
         if (settings is null)
         {
-            return model;
+            return null;
         }
 
         //only the first two values are stored
@@ -139,19 +139,25 @@ internal sealed class ConfigurationService : IConfigurationService
     /// <param name="currentUser"></param>
     /// <param name="groups"></param>
     /// <returns></returns>
-    private static IEnumerable<string> GetAllowedChildren(IUser currentUser, IEnumerable<GroupConfigurationModel> groups)
+    private static IEnumerable<string>? GetAllowedChildren(IUser currentUser, IEnumerable<GroupConfigurationModel> groups)
     {
         if (groups is null || !groups.Any())
         {
-            return Enumerable.Empty<string>();
+            return null;
         }
 
         // need to get all the permitted types for all groups where the current user is a member;
         IEnumerable<int> groupIds = currentUser.Groups.Select(g => g.Id);
 
-        IEnumerable<string>? allowedChildren = groups
-            .Where(g => groupIds.Contains(g.GroupId))
-            .SelectMany(g => g.Udis.Select(u => u.ToString()));
+        IEnumerable<GroupConfigurationModel> groupsWhereUserIsAMember = groups.Where(g => groupIds.Contains(g.GroupId));
+
+        // if the user has no groups with any configuration, allow normal content creation
+        if (!groupsWhereUserIsAMember.Any())
+        {
+            return null;
+        }
+
+        IEnumerable<string>? allowedChildren = groupsWhereUserIsAMember.SelectMany(g => g.Udis.Select(u => u.ToString()));
 
         return (allowedChildren?.Any() ?? false) ? allowedChildren.Distinct() : Enumerable.Empty<string>();
     }

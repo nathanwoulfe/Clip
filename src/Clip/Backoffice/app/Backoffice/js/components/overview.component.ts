@@ -1,149 +1,152 @@
-﻿import { EntityType } from "../clip";
+import { EntityType } from "../clip";
 
 class Overview implements IClipOverview {
 
-    config!: IClipConfigModel;
-    groups: Array<UmbUserGroup> = [];
-    contentTypes: Array<UmbContentType> = [];
-    mediaTypes: Array<UmbContentType> = [];
-    syncModel!: { [key: string]: Array<UmbContentType> };
+  config!: IClipConfigModel;
+  groups: Array<UmbUserGroup> = [];
+  contentTypes: Array<UmbContentType> = [];
+  mediaTypes: Array<UmbContentType> = [];
+  syncModel!: { [key: string]: Array<UmbContentType> };
 
-    editorService;
-     
-    documentTypeKey = 'A2CB7800-F571-4787-9638-BC48539A0EFB';
-    mediaTypeKey = '4EA4382B-2F5A-4C2B-9587-AE9B3CF3602E';
-    filterCssClass = 'not-allowed not-published';
+  editorService;
 
-    constructor(
-        private $q,
-        private clipService: IClipService,
-        private mediaTypeResource,
-        private userGroupsResource,
-        private contentTypeResource,
-        editorService,
-    ) {
-        this.editorService = editorService;
-    }
+  documentTypeKey = 'A2CB7800-F571-4787-9638-BC48539A0EFB';
+  mediaTypeKey = '4EA4382B-2F5A-4C2B-9587-AE9B3CF3602E';
+  filterCssClass = 'not-allowed not-published';
 
-    $onInit = async () => {
-        const promises = [
-            this.contentTypeResource.getAll(),
-            this.mediaTypeResource.getAll(),
-            this.clipService.get(),
-            this.userGroupsResource.getUserGroups({ onlyCurrentUserGroups: false }),,
-        ];
+  constructor(
+    private $q,
+    private clipService: IClipService,
+    private mediaTypeResource,
+    private userGroupsResource,
+    private contentTypeResource,
+    editorService,
+  ) {
+    this.editorService = editorService;
+  }
 
-        [this.contentTypes, this.mediaTypes, this.config, this.groups] = await this.$q.all(promises);
+  $onInit = async () => {
+    const promises = [
+      this.contentTypeResource.getAll(),
+      this.mediaTypeResource.getAll(),
+      this.clipService.get(),
+      this.userGroupsResource.getUserGroups({ onlyCurrentUserGroups: false }), ,
+    ];
 
-        this.config.groups.forEach(g => this.populateSyncModel(g));
+    [this.contentTypes, this.mediaTypes, this.config, this.groups] = await this.$q.all(promises);
 
-        this.config.contentTypeCounts.forEach(c => this.populateCountModel(c));
-    }
+    this.config.groups.forEach(g => this.populateSyncModel(g));
 
-    private getTypeByUdi = (udi: IUdiModel) => {
-        const type = this.contentTypes.find(x => x.udi === udi.uriValue) || this.mediaTypes.find(x => x.udi === udi.uriValue);
-        return type;
-    }
+    this.config.contentTypeCounts.forEach(c => this.populateCountModel(c));
+  }
 
-    populateCountModel = (c: IClipContentTypeCountModel) => {
-        const type = this.getTypeByUdi(c.udi);
-        if (!type) return;
+  private getTypeByUdi = (udi: IUdiModel) => {
+    const type = this.contentTypes.find(x => x.udi === udi.uriValue) || this.mediaTypes.find(x => x.udi === udi.uriValue);
+    return type;
+  }
 
-        c.icon = type.icon;
-        c.name = type.name;
-    }
+  populateCountModel = (c: IClipContentTypeCountModel) => {
+    const type = this.getTypeByUdi(c.udi);
+    if (!type) return;
 
-    populateSyncModel = (g: IClipGroupConfigModel) => {
-        if (!g.groupId) return;
+    c.icon = type.icon;
+    c.name = type.name;
+  }
 
-        const group = this.groups.find(x => x.id == g.groupId);
-        if (!group) return;
+  populateSyncModel = (g: IClipGroupConfigModel) => {
+    if (!g.groupId) return;
 
-        g.icon = group?.icon;
-        g.groupName = group?.name;
+    const group = this.groups.find(x => x.id == g.groupId);
+    if (!group) return;
 
-        let contentTypeSyncModel: Array<UmbContentType> = [];
+    g.icon = group?.icon;
+    g.groupName = group?.name;
 
-        g.udis.forEach(udi => {
-            const type = this.getTypeByUdi(udi);
-            if (!type) return;
+    let contentTypeSyncModel: Array<UmbContentType> = [];
 
-            contentTypeSyncModel.push(type);
+    g.udis.forEach(udi => {
+      const type = this.getTypeByUdi(udi);
+      if (!type) return;
+
+      contentTypeSyncModel.push(type);
+    });
+
+    this.syncModel[g.groupId] = contentTypeSyncModel;
+  }
+
+  getIcon(type: { udi: string, [key: string]: any }) {
+    type.icon = (type.udi.includes(EntityType.DocumentType) ? this.contentTypes : this.mediaTypes)
+      .find(t => t.udi === type.udi)?.icon;
+  }
+
+  removeGroup = id => {
+    const g = this.config.groups.find(g => g.groupId === id);
+    if (g === undefined) return;
+    delete this.syncModel[g.groupId];
+
+    const idx = this.config.groups.findIndex(g => g.groupId === id);
+    this.config.groups.splice(idx, 1);
+  }
+
+  addGroup = () => {
+    const groupPickerOptions = {
+      submit: model => {
+        model.selection.forEach(s => {
+          const idx = this.config.groups.findIndex(x => x.groupId == s.id);
+          if (idx !== -1) return;
+
+          this.config.groups.push({
+            icon: s.icon,
+            groupId: s.id,
+            groupName: s.name,
+            udis: [],
+          });
         });
 
-        this.syncModel[g.groupId] = contentTypeSyncModel;
+        this.editorService.close();
+      },
+      close: () => this.editorService.close()
+    };
+
+    this.editorService.userGroupPicker(groupPickerOptions);
+  }
+
+  addType(id, type: EntityType) {
+    const typePickerOptions = {
+      multiPicker: true,
+      filterCssClass: this.filterCssClass,
+      filter: item =>
+        item.nodeType === 'container' || item.metaData.isElement || (this.syncModel[id] || [])
+          .some(x => x.id == item.id),
+      submit: model => {
+        const valueArray = this.syncModel[id] || [];
+
+        model.selection.forEach(value => {
+          this.getIcon(value);
+          valueArray.push(value);
+        });
+
+        this.syncModel[id] = valueArray;
+        this.editorService.close();
+      },
+      close: () => this.editorService.close()
+    };
+
+    this.openPicker(type, typePickerOptions);
+  }
+
+  removeType(type, id) {
+    const idx = this.syncModel[id].findIndex(x => x.udi === type.udi.udiValue);
+    this.syncModel[id].splice(idx, 1);
+  }
+
+  openPicker(type: 'document-type' | 'media-type', options: IClipPickerOptions) {
+    if (type === EntityType.DocumentType) {
+      this.editorService.contentTypePicker(options);
+    } else {
+      this.editorService.mediaTypePicker(options);
     }
-
-    getIcon(type: { udi: string, [key: string]: any }) {
-        type.icon = (type.udi.includes(EntityType.DocumentType) ? this.contentTypes : this.mediaTypes)
-            .find(t => t.udi === type.udi)?.icon;
-    }
-
-    removeGroup = index => {
-        const g = this.config.groups[index];
-        delete this.contentTypeResource[g.groupId];
-        this.config.groups.splice(index, 1);
-    }
-
-    addGroup = () => {
-        const groupPickerOptions = {
-            submit: model => {
-                model.selection.forEach(s => {
-                    const idx = this.config.groups.findIndex(x => x.groupId == s.id);
-                    if (idx !== -1) return;
-
-                    this.config.groups.push({
-                        icon: s.icon,
-                        groupId: s.id,
-                        groupName: s.name,
-                        udis: [],
-                    });
-                });
-
-                this.editorService.close();
-            },
-            close: () => this.editorService.close()
-        };
-
-        this.editorService.userGroupPicker(groupPickerOptions);
-    }
-
-    addType(groupId, type: EntityType) {
-        const typePickerOptions = {
-            multiPicker: true,
-            filterCssClass: this.filterCssClass,
-            filter: item =>
-                item.nodeType === 'container' || item.metaData.isElement || (this.syncModel[groupId] || [])
-                    .some(x => x.id == item.id),
-            submit: model => {
-                const valueArray = this.syncModel[groupId] || [];
-
-                model.selection.forEach(value => {
-                    this.getIcon(value);
-                    valueArray.push(value);
-                });
-
-                this.syncModel[groupId] = valueArray;
-                this.editorService.close();
-            },
-            close: () => this.editorService.close()
-        };
-
-        this.openPicker(type, typePickerOptions);
-    }
-
-    removeType(type, groupId) {
-        const idx = this.syncModel[groupId].findIndex(x => x.udi === type.udi.udiValue);
-        this.syncModel[groupId].splice(idx, 1);
-    }
-
-    openPicker(type: 'document-type' | 'media-type', options: IClipPickerOptions) {
-        if (type === EntityType.DocumentType) {
-            this.editorService.contentTypePicker(options);
-        } else {
-            this.editorService.mediaTypePicker(options);
-        }
-    }
+  }
 }
 
 const template = `
@@ -226,7 +229,7 @@ const template = `
                 <div class="umb-node-preview__actions">
                     <button type="button"
                             class="umb-node-preview__action umb-node-preview__action--red"
-                            ng-click="$ctrl.removeGroup($index)">
+                            ng-click="$ctrl.removeGroup(group.groupId)">
                         <localize key="general_remove">Remove</localize>
                     </button>
                 </div>
@@ -243,12 +246,12 @@ const template = `
 <type-limits-table type="media-type" header-key="clip_mediaTypeLimits" type-key="clip_mediaType" config="$ctrl.config"></type-limits-table>`;
 
 export const OverviewComponent = {
-    name: 'clipOverview',
-    transclude: true,
-    template,
-    controller: Overview,
-    bindings: {
-        config: '=',
-        syncModel: '=',
-    },
+  name: 'clipOverview',
+  transclude: true,
+  template,
+  controller: Overview,
+  bindings: {
+    config: '=',
+    syncModel: '=',
+  },
 }

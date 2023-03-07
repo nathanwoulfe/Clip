@@ -7,8 +7,9 @@ public sealed class ClipConfigurationModel
 {
     /// <summary>
     /// Gets a list of all types configured as permitted children.
+    /// When null, all types are permitted, when empty no types are permitted.
     /// </summary>
-    public IEnumerable<string> AllowedChildren { get; set; }
+    public IEnumerable<string>? AllowedChildren { get; set; }
 
     /// <summary>
     /// Gets a collection of groups and their permitted types.
@@ -30,7 +31,6 @@ public sealed class ClipConfigurationModel
     /// </summary>
     public ClipConfigurationModel()
     {
-        AllowedChildren = Enumerable.Empty<string>();
         Groups = Enumerable.Empty<GroupConfigurationModel>();
         ContentTypeCounts = Enumerable.Empty<ContentTypeCount>();
         ExistingItemCounts = new();

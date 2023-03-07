@@ -11,7 +11,7 @@ public interface IConfigurationService
     /// Get the configuration model for determining permitted child types.
     /// </summary>
     /// <returns><see cref="ClipConfigurationModel"/>.</returns>
-    ClipConfigurationModel GetConfigurationModel();
+    ClipConfigurationModel? GetConfigurationModel();
 
     /// <summary>
     /// Saves the configuration model.
