@@ -51,7 +51,7 @@ public sealed class ConfigurationController : UmbracoAuthorizedApiController
     {
         _configService.Save(model);
 
-        var notification = new BackOfficeNotification()
+        BackOfficeNotification notification = new()
         {
             NotificationType = NotificationStyle.Success,
             Header = _localizedTextService.Localize("general", "success"),

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Clip.Models;
 
 /// <summary>
@@ -9,7 +11,15 @@ public sealed class ClipConfigurationModel
     /// Gets a list of all types configured as permitted children.
     /// When null, all types are permitted, when empty no types are permitted.
     /// </summary>
+    [JsonIgnore]
     public IEnumerable<string>? AllowedChildren { get; set; }
+
+    /// <summary>
+    /// Gets a list of all types configured as permitted elements.
+    /// When null, all elements are permitted, when empty no elements are permitted.
+    /// </summary>
+    [JsonIgnore]
+    public IEnumerable<string>? AllowedElements { get; set; }
 
     /// <summary>
     /// Gets a collection of groups and their permitted types.

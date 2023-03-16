@@ -111,18 +111,26 @@ class Overview implements IClipOverview {
     this.editorService.userGroupPicker(groupPickerOptions);
   }
 
-  addType(id, type: EntityType) {
+  isItemFilteredInPicker(id, item, isElement: boolean) {
+    if (item.metaData.tree.includes('mediaTypes')) {
+      return (this.syncModel[id] || []).some(x => x.id == item.id);
+    }
+
+    return item.nodeType === 'container' ||
+      item.metaData.isElement !== isElement ||
+      (this.syncModel[id] || []).some(x => x.id == item.id);
+  }
+
+  addType(id, type: EntityType, isElement: boolean) {
     const typePickerOptions = {
       multiPicker: true,
       filterCssClass: this.filterCssClass,
-      filter: item =>
-        item.nodeType === 'container' || item.metaData.isElement || (this.syncModel[id] || [])
-          .some(x => x.id == item.id),
+      filter: item => this.isItemFilteredInPicker(id, item, isElement),
       submit: model => {
         const valueArray = this.syncModel[id] || [];
-
         model.selection.forEach(value => {
           this.getIcon(value);
+          value.isElement = isElement;
           valueArray.push(value);
         });
 
@@ -136,7 +144,7 @@ class Overview implements IClipOverview {
   }
 
   removeType(type, id) {
-    const idx = this.syncModel[id].findIndex(x => x.udi === type.udi.udiValue);
+    const idx = this.syncModel[id].findIndex(x => x.udi === type.udi);
     this.syncModel[id].splice(idx, 1);
   }
 
@@ -151,95 +159,120 @@ class Overview implements IClipOverview {
 
 const template = `
 <div class="umb-editor-sub-header justify-start items-center mb0">
-    <h5>
-        <localize key="clip_userGroupRules">User group rules</localize>
-    </h5>
-    <umb-button type="button"
-                button-style="outline"
-                class="ml2"
-                state="init"
-                action="$ctrl.addGroup()"
-                label-key="general_add">
-    </umb-button>
+  <h5>
+    <localize key="clip_userGroupRules">User group rules</localize>
+  </h5>
+  <umb-button type="button"
+              button-style="outline"
+              class="ml2"
+              state="init"
+              action="$ctrl.addGroup()"
+              label-key="general_add">
+  </umb-button>
 </div>
 
 <div class="umb-table" ng-if="$ctrl.config.groups.length">
-    <div class="umb-table-head">
-        <div class="umb-table-row">
-            <div class="umb-table-cell">
-
-            </div>
-            <div class="umb-table-cell">
-                <localize key="user_userGroup">User group</localize>
-            </div>
-            <div class="umb-table-cell">
-                <localize key="clip_allowedDocumentTypes">Allowed document types</localize>
-            </div>
-            <div class="umb-table-cell">
-                <localize key="clip_allowedMediaTypes">Allowed media types</localize>
-            </div>
-            <div class="umb-table-cell umb-table-cell--small">
-
-            </div>
-        </div>
+  <div class="umb-table-head">
+    <div class="umb-table-row">
+      <div class="umb-table-cell">
+      </div>
+      <div class="umb-table-cell">
+        <localize key="user_userGroup">User group</localize>
+      </div>
+      <div class="umb-table-cell">
+        <localize key="clip_allowedDocumentTypes">Allowed document types</localize>
+      </div>
+      <div class="umb-table-cell">
+        <localize key="clip_allowedElementTypes">Allowed element types</localize>
+      </div>
+      <div class="umb-table-cell">
+        <localize key="clip_allowedMediaTypes">Allowed media types</localize>
+      </div>
+      <div class="umb-table-cell umb-table-cell--small" style="max-width:95px">
+      </div>
     </div>
-    <div class="umb-table-body">
-        <div ng-repeat="group in $ctrl.config.groups track by $index" class="umb-table-row">
-            <div class="umb-table-cell">
-                <umb-icon icon="{{ group.icon }}" class="umb-table-body__icon umb-table-body__fileicon umb-icon"></umb-icon>
-            </div>
-            <div class="umb-table-cell">
-                <div class="umb-table-body__link">{{ group.groupName }}</div>
-            </div>
-            <div class="umb-table-cell flex-column mt0">
-                <div class="mb3">
-                    <umb-node-preview ng-repeat="type in $ctrl.syncModel[group.groupId] | filter: {udi: 'document-type'}"
-                                        name="type.name"
-                                        icon="type.icon"
-                                        sortable="false"
-                                        allow-edit="false"
-                                        allow-remove="true"
-                                        on-remove="$ctrl.removeType(type, group.groupId)">
-                    </umb-node-preview>
-                </div>
-                <button type="button"
-                        class="umb-node-preview__action ml0 mr0"
-                        ng-click="$ctrl.addType(group.groupId, 'document-type')">
-                    <localize key="clip_addContentType">Add document type</localize>
-                </button>
-            </div>
-            <div class="umb-table-cell flex-column mt0">
-                <div class="mb3">
-                    <umb-node-preview ng-repeat="type in $ctrl.syncModel[group.groupId] | filter: {udi: 'media-type'}"
-                                        name="type.name"
-                                        icon="type.icon"
-                                        sortable="false"
-                                        allow-edit="false"
-                                        allow-remove="true"
-                                        on-remove="$ctrl.removeType(type, group.groupId)">
-                    </umb-node-preview>
-                </div>
-                <button type="button"
-                        class="umb-node-preview__action ml0 mr0"
-                        ng-click="$ctrl.addType(group.groupId, 'media-type')">
-                    <localize key="clip_addMediaType">Add media type</localize>
-                </button>
-            </div>
-            <div class="umb-table-cell umb-table-cell--small">
-                <div class="umb-node-preview__actions">
-                    <button type="button"
-                            class="umb-node-preview__action umb-node-preview__action--red"
-                            ng-click="$ctrl.removeGroup(group.groupId)">
-                        <localize key="general_remove">Remove</localize>
-                    </button>
-                </div>
-            </div>
+  </div>
+  <div class="umb-table-body">
+    <div ng-repeat="group in $ctrl.config.groups track by $index" class="umb-table-row">
+      <div class="umb-table-cell">
+        <umb-icon icon="{{ group.icon }}" class="umb-table-body__icon umb-table-body__fileicon umb-icon"></umb-icon>
+      </div>
+      <div class="umb-table-cell">
+        <a class="umb-table-body__link" href="#/users/users/group/{{ group.groupId }}">{{ group.groupName }}</a>
+      </div>
+      <div class="umb-table-cell flex-column mt0">
+        <div class="mb2">
+          <umb-node-preview ng-repeat="type in $ctrl.syncModel[group.groupId] | filter: {udi: 'document-type', isElement: false}"
+                            name="type.name"
+                            icon="type.icon"
+                            sortable="false"
+                            allow-edit="false"
+                            allow-remove="true"
+                            on-remove="$ctrl.removeType(type, group.groupId)">
+          </umb-node-preview>
         </div>
+        <div class="umb-block-list__actions" style="overflow:visible">
+          <button type="button"
+                  class="btn-reset umb-block-list__create-button umb-outline"
+                  class="umb-node-preview__action ml-auto mt3"
+                  ng-click="$ctrl.addType(group.groupId, 'document-type', false)">
+            <localize key="general_add">Add</localize>
+          </button>
+        </div>
+      </div>
+      <div class="umb-table-cell flex-column mt0">
+        <div class="mb2">
+          <umb-node-preview ng-repeat="type in $ctrl.syncModel[group.groupId] | filter: {udi: 'document-type', isElement: true}"
+                            name="type.name"
+                            icon="type.icon"
+                            sortable="false"
+                            allow-edit="false"
+                            allow-remove="true"
+                            on-remove="$ctrl.removeType(type, group.groupId)">
+          </umb-node-preview>
+        </div>
+        <div class="umb-block-list__actions" style="overflow:visible">
+          <button type="button"
+                  class="btn-reset umb-block-list__create-button umb-outline"
+                  ng-click="$ctrl.addType(group.groupId, 'document-type', true)">
+            <localize key="general_add">Add</localize>
+          </button>
+        </div>
+      </div>
+      <div class="umb-table-cell flex-column mt0">
+        <div class="mb2">
+          <umb-node-preview ng-repeat="type in $ctrl.syncModel[group.groupId] | filter: {udi: 'media-type'}"
+                            name="type.name"
+                            icon="type.icon"
+                            sortable="false"
+                            allow-edit="false"
+                            allow-remove="true"
+                            on-remove="$ctrl.removeType(type, group.groupId)">
+          </umb-node-preview>
+        </div>
+        <div class="umb-block-list__actions" style="overflow:visible">
+          <button type="button"
+                  class="btn-reset umb-block-list__create-button umb-outline"
+                  ng-click="$ctrl.addType(group.groupId, 'media-type', false)">
+            <localize key="general_add">Add</localize>
+          </button>
+        </div>
+      </div>
+      <div class="umb-table-cell umb-table-cell--small" style="max-width:95px">
+        <div class="umb-node-preview__actions">
+          <button type="button"
+                  class="umb-node-preview__action umb-node-preview__action--red"
+                  ng-click="$ctrl.removeGroup(group.groupId)">
+            <localize key="general_remove">Remove</localize>
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <umb-empty-state ng-if="!$ctrl.config.groups.length">
-    <localize key="content_listViewNoItems">There are no items show in the list.</localize>
+  <localize key="content_listViewNoItems">There are no items show in the list.</localize>
 </umb-empty-state>
 
 <type-limits-table type="document-type" header-key="clip_contentTypeLimits" type-key="clip_contentType" config="$ctrl.config"></type-limits-table>

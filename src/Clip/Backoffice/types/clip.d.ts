@@ -1,4 +1,4 @@
-﻿interface IClipConfigModel {
+interface IClipConfigModel {
     groups: Array<IClipGroupConfigModel>;
     existingItemCounts?: { [key: string]: number };
     contentTypeCounts: Array<IClipContentTypeCountModel>;
