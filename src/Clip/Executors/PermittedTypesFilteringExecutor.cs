@@ -76,7 +76,7 @@ internal sealed class PermittedTypesFilteringExecutor : IPermittedTypesFiltering
     /// <param name="isMediaRequest"></param>
     /// <param name="collectionAccessor"></param>
     /// <returns></returns>
-    private IEnumerable<Udi?>? Filter(IEnumerable<Udi?> udis, bool isMediaRequest, Func<ClipConfigurationModel?, IEnumerable<string>?> collectionAccessor)
+    internal IEnumerable<Udi?>? Filter(IEnumerable<Udi?> udis, bool isMediaRequest, Func<ClipConfigurationModel?, IEnumerable<string>?> collectionAccessor)
     {
         ClipConfigurationModel? config = _configService.GetConfigurationModel();
 
@@ -114,7 +114,7 @@ internal sealed class PermittedTypesFilteringExecutor : IPermittedTypesFiltering
     /// <param name="udi"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    private static bool HasCapacity(Udi? udi, ClipConfigurationModel config)
+    internal static bool HasCapacity(Udi? udi, ClipConfigurationModel config)
     {
         int limitFromConfig = config.ContentTypeCounts.FirstOrDefault(y => y.Udi == udi)?.Max ?? 0;
         string? udiString = udi?.ToString();
@@ -130,30 +130,15 @@ internal sealed class PermittedTypesFilteringExecutor : IPermittedTypesFiltering
     /// <param name="allowedChildren"></param>
     /// <param name="isMediaRequest"></param>
     /// <returns></returns>
-    private static bool IsValidChild(Udi? udi, IEnumerable<string>? allowedChildren, bool isMediaRequest)
+    internal static bool IsValidChild(Udi? udi, IEnumerable<string>? allowedChildren, bool isMediaRequest)
     {
         // AllowedChildren is assumed to be non-null, as this function is only called after a null-check
+        if (udi is null)
+        {
+            return false;
+        }
 
         // if child is included in allowed children
-        if (udi is not null && allowedChildren!.Contains(udi.ToString()))
-        {
-            return true;
-        }
-
-        // if getting media types, and this is type is not in allowed children, type is not permitted
-        // would have returned true above if it were listed
-        if (isMediaRequest && allowedChildren!.Any(x => x.Contains(UdiEntityType.MediaType)))
-        {
-            return false;
-        }
-
-        // if getting document types, and this is type is not in allowed children, type is not permitted
-        // would have returned true above if it were listed
-        if (!isMediaRequest && allowedChildren!.Any(x => x.Contains(UdiEntityType.DocumentType)))
-        {
-            return false;
-        }
-
-        return true;
+        return allowedChildren!.Contains(udi.ToString()) && udi.EntityType == (isMediaRequest ? UdiEntityType.MediaType : UdiEntityType.DocumentType);
     }
 }

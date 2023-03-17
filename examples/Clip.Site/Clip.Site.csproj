@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="clean" Version="2.1.6" />
-    <ProjectReference Include="..\src\Clip\Clip.csproj" />
+    <ProjectReference Include="..\..\src\Clip\Clip.csproj" />
     <PackageReference Include="Umbraco.Cms" Version="10.4" />
   </ItemGroup>
 
