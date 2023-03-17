@@ -1,4 +1,6 @@
+using Clip.Executors;
 using Clip.Handlers;
+using Clip.Repositories;
 using Clip.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
@@ -18,6 +20,9 @@ public sealed class WebComposer : IComposer
         _ = builder.ManifestFilters().Append<ClipManifestFilter>();
 
         _ = builder.Services.AddTransient<IConfigurationService, ConfigurationService>();
+        _ = builder.Services.AddTransient<IConfigurationRepository, ConfigurationRepository>();
+        _ = builder.Services.AddTransient<IPermittedTypesFilteringExecutor, PermittedTypesFilteringExecutor>();
+        _ = builder.Services.AddMvc(options => options.Filters.Add<GetEmptyByKeysActionFilter>());
 
         _ = builder
             .AddNotificationHandler<UmbracoApplicationStartedNotification, ApplicationStartedHandler>()

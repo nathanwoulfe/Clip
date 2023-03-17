@@ -4,9 +4,7 @@
 		<key alias="contentCreationRules">Content Creation Rules</key>
 	</area>
 	<area alias="clip">
-    <key alias="addDocumentType">Add document type</key>
     <key alias="allowedDocumentTypes">Allowed document types</key>
-    <key alias="addMediaType">Add media type</key>
     <key alias="allowedMediaTypes">Allowed media types</key>
 		<key alias="userGroupRules">User group rules</key>
     <key alias="contentTypeLimits">Document Type limits</key>

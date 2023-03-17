@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" PrivateAssets="all" />
+    <PackageReference Include="Moq" Version="4.18.2" PrivateAssets="all" />
+    <PackageReference Include="xunit" Version="2.4.2" PrivateAssets="all" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.4.2" PrivateAssets="all" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms" Version="10.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Clip\Clip.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    
+    <AssemblyAttribute Include="Xunit.CollectionBehaviorAttribute">
+      <_Parameter1>Xunit.CollectionBehavior.CollectionPerAssembly</_Parameter1>
+      <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>
