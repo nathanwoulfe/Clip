@@ -16,6 +16,7 @@ class Overview implements IClipOverview {
 
   constructor(
     private $q,
+    private $scope,
     private clipService: IClipService,
     private mediaTypeResource,
     private userGroupsResource,
@@ -38,6 +39,8 @@ class Overview implements IClipOverview {
     this.config.groups.forEach(g => this.populateSyncModel(g));
 
     this.config.contentTypeCounts.forEach(c => this.populateCountModel(c));
+
+    this.$scope.$apply();
   }
 
   private getTypeByUdi = (udi: IUdiModel) => {
@@ -170,6 +173,8 @@ const template = `
               label-key="general_add">
   </umb-button>
 </div>
+
+
 
 <div class="umb-table" ng-if="$ctrl.config.groups.length">
   <div class="umb-table-head">

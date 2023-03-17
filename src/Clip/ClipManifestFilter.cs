@@ -1,3 +1,4 @@
+using System.Reflection;
 using Umbraco.Cms.Core.Manifest;
 
 namespace Clip;
@@ -8,9 +9,11 @@ namespace Clip;
 internal sealed class ClipManifestFilter : IManifestFilter
 {
     /// <inheritdoc/>
-    public void Filter(List<PackageManifest> manifests) => manifests.Add(new PackageManifest
+    public void Filter(List<PackageManifest> manifests) => manifests.Add(new()
     {
         PackageName = Constants.Name,
+        AllowPackageTelemetry = true,
+        Version = GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty,
         Scripts = new[]
             {
                 "/App_Plugins/Clip/Backoffice/js/clip.min.js",

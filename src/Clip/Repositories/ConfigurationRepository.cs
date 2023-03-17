@@ -1,11 +1,16 @@
 using Clip.Models;
 using Newtonsoft.Json;
+using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace Clip.Repositories;
 
 internal sealed class ConfigurationRepository : IConfigurationRepository
 {
+    private readonly IAppPolicyCache _appCache;
+
+    private const string ClipCacheKey = "__ClipConfigurationCache";
+
     private const string ExistingItemCountQuery = @"
         SELECT Count(*) as Count, N.uniqueId, N.nodeObjectType
         FROM umbracoContent C
@@ -18,20 +23,29 @@ internal sealed class ConfigurationRepository : IConfigurationRepository
 
     private readonly IScopeProvider _scopeProvider;
 
-    public ConfigurationRepository(IScopeProvider scopeProvider) => _scopeProvider = scopeProvider;
+    public ConfigurationRepository(IScopeProvider scopeProvider, IAppPolicyCache appCache)
+    {
+        _scopeProvider = scopeProvider;
+        _appCache = appCache;
+    }
 
     public ClipConfigurationModel? Get()
     {
-        using IScope scope = _scopeProvider.CreateScope();
-        string? settingsStr = scope.Database.Fetch<ContentCreationRulesSchema>()?.FirstOrDefault()?.Value;
-        _ = scope.Complete();
-
-        if (settingsStr is null)
+        var model = (ClipConfigurationModel?)_appCache.Get(ClipCacheKey, () =>
         {
-            return null;
-        }
+            using IScope scope = _scopeProvider.CreateScope();
+            string? settingsStr = scope.Database.Fetch<ContentCreationRulesSchema>()?.FirstOrDefault()?.Value;
+            _ = scope.Complete();
 
-        return JsonConvert.DeserializeObject<ClipConfigurationModel>(settingsStr) ?? null;
+            if (settingsStr is null)
+            {
+                return null;
+            }
+
+            return JsonConvert.DeserializeObject<ClipConfigurationModel>(settingsStr) ?? null;
+        });
+
+        return model;
     }
 
     public void Save(ClipConfigurationModel model)
@@ -41,6 +55,10 @@ internal sealed class ConfigurationRepository : IConfigurationRepository
         poco.Value = JsonConvert.SerializeObject(model);
         scope.Database.Save(poco);
         _ = scope.Complete();
+
+        // clear and re-prime cache
+        _appCache.ClearByKey(ClipCacheKey);
+        _ = Get();
     }
 
 

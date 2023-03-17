@@ -1,53 +1,53 @@
-﻿import { EntityType } from "../clip";
+import { EntityType } from "../clip";
 
 class TypeLimitsTable {
 
-    config!: IClipConfigModel;
-    items!: Array<IClipContentTypeCountModel>;
-    type!: EntityType;
-    parent!: IClipOverview;
-     
-    private _filtered: boolean = false;
+  config!: IClipConfigModel;
+  items!: Array<IClipContentTypeCountModel>;
+  type!: EntityType;
+  parent!: IClipOverview;
 
-    $doCheck = () => {
-        if (this._filtered || !this.config) return;
+  private _filtered: boolean = false;
 
-        this.items = this.config.contentTypeCounts.filter(x => x.udi.entityType === this.type);
-        this._filtered = true;
-    }
+  $doCheck = () => {
+    if (this._filtered || !this.config) return;
 
-    addType = () => {
-        const typePickerOptions: IClipPickerOptions = {
-            multiPicker: true,
-            filterCssClass: this.parent.filterCssClass,
-            filter: item => item.nodeType === 'container' || item.metaData.isElement
-                || this.items.some(x => x.udi.uriValue == item.udi),                
-            submit: model => {
-                model.selection.forEach(value => {
-                    value.count = (this.config.existingItemCounts ? this.config.existingItemCounts[value.udi] : 0) ?? 0;
-                    value.uniqueId = value.key;
-                    value.nodeObjectType = this.type === EntityType.DocumentType ? this.parent.documentTypeKey : this.parent.mediaTypeKey;
+    this.items = this.config.contentTypeCounts.filter(x => x.udi.entityType === this.type);
+    this._filtered = true;
+  }
 
-                    this.parent.getIcon(value);
-                    this.items.push(value);
-                    this.config.contentTypeCounts.push(value);
-                });
+  addType = () => {
+    const typePickerOptions: IClipPickerOptions = {
+      multiPicker: true,
+      filterCssClass: this.parent.filterCssClass,
+      filter: item => item.nodeType === 'container' || item.metaData.isElement
+        || this.items.some(x => x.udi.uriValue == item.udi),
+      submit: model => {
+        model.selection.forEach(value => {
+          value.count = (this.config.existingItemCounts ? this.config.existingItemCounts[value.udi] : 0) ?? 0;
+          value.uniqueId = value.key;
+          value.nodeObjectType = this.type === EntityType.DocumentType ? this.parent.documentTypeKey : this.parent.mediaTypeKey;
 
-                this.parent.editorService.close();
-            },
-            close: () => this.parent.editorService.close()
-        };
+          this.parent.getIcon(value);
+          this.items.push(value);
+          this.config.contentTypeCounts.push(value);
+        });
 
-        this.parent.openPicker(this.type, typePickerOptions);
-    }
+        this.parent.editorService.close();
+      },
+      close: () => this.parent.editorService.close()
+    };
 
-    removeType = (uniqueId: string) => {
-        let idx = this.items.findIndex(x => x.uniqueId === uniqueId);
-        this.items.splice(idx, 1);
+    this.parent.openPicker(this.type, typePickerOptions);
+  }
 
-        idx = this.config.contentTypeCounts.findIndex(x => x.uniqueId === uniqueId);
-        this.config.contentTypeCounts.splice(idx, 1);
-    }
+  removeType = (uniqueId: string) => {
+    let idx = this.items.findIndex(x => x.uniqueId === uniqueId);
+    this.items.splice(idx, 1);
+
+    idx = this.config.contentTypeCounts.findIndex(x => x.uniqueId === uniqueId);
+    this.config.contentTypeCounts.splice(idx, 1);
+  }
 }
 
 const template = `
@@ -118,17 +118,17 @@ const template = `
     </div>`;
 
 export const TypeLimitsTableComponent = {
-    name: 'typeLimitsTable',
-    transclude: true,
-    require: {
-        parent: '^clipOverview',
-    },
-    bindings: {
-        headerKey: '@',
-        typeKey: '@',
-        type: '@',
-        config: '=',
-    },
-    template,
-    controller: TypeLimitsTable
+  name: 'typeLimitsTable',
+  transclude: true,
+  require: {
+    parent: '^clipOverview',
+  },
+  bindings: {
+    headerKey: '@',
+    typeKey: '@',
+    type: '@',
+    config: '=',
+  },
+  template,
+  controller: TypeLimitsTable
 };
