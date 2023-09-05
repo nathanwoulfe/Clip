@@ -49,7 +49,7 @@ The view allows adding rules for user groups and content type limits.
 
 # Changelog
 
-Upgrading from v1.0 to either v10 or v11? There's some manual tomfoolery required.
+Upgrading from v1.0 to v10+? There's some manual tomfoolery required.
 
 Since v10+ includes support for media, the underlying data store had to change which meant Clip needs to distinguish Document and Media types, as well as the actual content type.
 
