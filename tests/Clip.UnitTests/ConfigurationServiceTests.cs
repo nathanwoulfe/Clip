@@ -34,30 +34,30 @@ public class ConfigurationServiceTests
     // returns (null, null) as user is not a member of any groups with rules configured
     [MemberData(
         nameof(AllowedChildrenParameterGenerator.Get),
-        parameters: new object[]
-        {
+        parameters:
+        [
             10,
             new int[] { 1 },
             new int[] { 2 },
             new string[] { "umb://document-type/720818e6-1134-4fdd-b8e7-52ee7b0c3c74" },
             -1,
             -1,
-        },
+        ],
         MemberType = typeof(AllowedChildrenParameterGenerator))]
 
     // returns (1, 0) as user is not a member of one group with a document type rule
     // and 0 rules exist for element-types for the group
     [MemberData(
         nameof(AllowedChildrenParameterGenerator.Get),
-        parameters: new object[]
-        {
+        parameters:
+        [
             10,
             new int[] { 1 },
             new int[] { 1 },
             new string[] { "umb://document-type/720818e6-1134-4fdd-b8e7-52ee7b0c3c74" },
             1,
             0,
-        },
+        ],
         MemberType = typeof(AllowedChildrenParameterGenerator))]
 
     // returns (1, 1) as user is a member of two groups, with one item each, where the second will
@@ -65,8 +65,8 @@ public class ConfigurationServiceTests
     // each UDI string is split and assigned to a group
     [MemberData(
         nameof(AllowedChildrenParameterGenerator.Get),
-        parameters: new object[]
-        {
+        parameters:
+        [
             10,
             new int[] { 1, 2 },
             new int[] { 1, 2 },
@@ -77,7 +77,7 @@ public class ConfigurationServiceTests
             },
             1,
             1,
-        },
+        ],
         MemberType = typeof(AllowedChildrenParameterGenerator))]
 
     // returns (2, null) as user is a member of two groups, one which has two type rules assigned
@@ -85,8 +85,8 @@ public class ConfigurationServiceTests
     // elements is null as no document type children exist, only media
     [MemberData(
         nameof(AllowedChildrenParameterGenerator.Get),
-        parameters: new object[]
-        {
+        parameters:
+        [
             10,
             new int[] { 1, 2 },
             new int[] { 1 },
@@ -96,15 +96,15 @@ public class ConfigurationServiceTests
             },
             2,
             -1,
-        },
+        ],
         MemberType = typeof(AllowedChildrenParameterGenerator))]
 
 
     // returns (3, null) as we remove the duplicates and are only looking at media types so no elements exist
     [MemberData(
         nameof(AllowedChildrenParameterGenerator.Get),
-        parameters: new object[]
-        {
+        parameters:
+        [
             10,
             new int[] { 1, 2 },
             new int[] { 1, 2, 3 },
@@ -116,14 +116,14 @@ public class ConfigurationServiceTests
             },
             3,
             -1,
-        },
+        ],
         MemberType = typeof(AllowedChildrenParameterGenerator))]
 
     // returns (1, 2) as we remove the duplicates and user is not a member of group 3
     [MemberData(
         nameof(AllowedChildrenParameterGenerator.Get),
-        parameters: new object[]
-        {
+        parameters:
+        [
             10,
             new int[] { 1, 2 },
             new int[] { 1, 2, 3 },
@@ -135,7 +135,7 @@ public class ConfigurationServiceTests
             },
             1,
             2,
-        },
+        ],
         MemberType = typeof(AllowedChildrenParameterGenerator))]
 
     [Theory]

@@ -14,10 +14,10 @@ internal sealed class ClipManifestFilter : IManifestFilter
         PackageName = Constants.Name,
         AllowPackageTelemetry = true,
         Version = GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty,
-        Scripts = new[]
-            {
+        Scripts =
+            [
                 "/App_Plugins/Clip/Backoffice/js/clip.min.js",
-            },
+            ],
         BundleOptions = BundleOptions.None,
     });
 }

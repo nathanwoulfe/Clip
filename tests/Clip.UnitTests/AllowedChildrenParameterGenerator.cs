@@ -9,7 +9,7 @@ namespace Clip.UnitTests;
 public class AllowedChildrenParameterGenerator
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="userId">The current user id.</param>
     /// <param name="userGroupIds">The groups the current user belongs to.</param>
@@ -26,7 +26,7 @@ public class AllowedChildrenParameterGenerator
         int expectedDocumentTypeCount,
         int expectedElementTypeCount)
     {
-        List<object[]> data = new();
+        List<object[]> data = [];
         Mock<IUser> currentUser = new();
 
         currentUser.Setup(x => x.Id).Returns(userId);
@@ -53,7 +53,7 @@ public class AllowedChildrenParameterGenerator
             return contentType.Object;
         });
 
-        data.Add(new object[] { currentUser.Object, groups, contentTypes, expectedDocumentTypeCount, expectedElementTypeCount });
+        data.Add([currentUser.Object, groups, contentTypes, expectedDocumentTypeCount, expectedElementTypeCount]);
 
         return data;
     }
@@ -61,7 +61,8 @@ public class AllowedChildrenParameterGenerator
     private static IEnumerable<ReadOnlyUserGroup> GetUserGroups(IEnumerable<int> groupIds) =>
         groupIds.Select(x => new ReadOnlyUserGroup(
             x,
-            x.ToString(),
+            Guid.NewGuid(),
+            null,
             null,
             null,
             null,
