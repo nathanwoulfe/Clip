@@ -38,7 +38,7 @@ internal sealed class ServerVariablesParsingNotificationHandler : INotificationH
 
         notification.ServerVariables.Add(Constants.Name, new Dictionary<string, object>
         {
-            { "pluginPath", $"{umbracoSettings["appPluginsPath"]}/Clip/Backoffice" },
+            { "pluginPath", $"{umbracoSettings["appPluginsPath"]}/Clip/backoffice" },
             { "configurationApiBaseUrl", _linkGenerator.GetUmbracoApiServiceBaseUrl<ConfigurationController>(x => x.Get()) ?? string.Empty },
         });
     }
