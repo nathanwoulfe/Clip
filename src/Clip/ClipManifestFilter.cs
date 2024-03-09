@@ -16,7 +16,7 @@ internal sealed class ClipManifestFilter : IManifestFilter
         Version = GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty,
         Scripts = new[]
             {
-                "/App_Plugins/Clip/Backoffice/js/clip.min.js",
+                "/App_Plugins/Clip/backoffice/js/clip.min.js",
             },
         BundleOptions = BundleOptions.None,
     });
